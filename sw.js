@@ -12,7 +12,7 @@
  *
  * Bump CACHE_VERSION whenever the ASSETS list changes (old caches are deleted on activate).
  */
-const CACHE_VERSION = 'v74';
+const CACHE_VERSION = 'v75';
 const CACHE_NAME = 'ballisticpro-' + CACHE_VERSION;
 const NET_TIMEOUT_MS = 3000;
 
@@ -94,8 +94,12 @@ function networkFirst(event) {
     fetch(req, { cache: 'no-cache' })
       .then(res => {
         clearTimeout(timer);
-        if (res && res.ok) putInCache(event, req, res);
-        done(res);
+        if (res && res.ok) { putInCache(event, req, res); done(res); return; }
+        // Server answered with an error (404 if the site is taken down, 5xx, …): prefer the
+        // cached copy so the installed app keeps working instead of showing an error page.
+        cacheMatch(req)
+          .then(cached => cached || (req.mode === 'navigate' ? caches.match('index.html') : null))
+          .then(cached => done(cached || res));
       })
       .catch(() => {
         clearTimeout(timer);

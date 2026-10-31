@@ -105,6 +105,32 @@ const noopCtx = new Proxy({}, {
     ok(max === want, `slider max = scope max (${max} = ${want}), not 24`);
   }
 
+  console.log('\nAmmo list is filtered by the weapon calibre');
+  const optionCals = () => ev(`(() => { const t = document.getElementById('weaponType').value; const L = t === 'airgun' ? appState.projectilesDB.airgun : appState.projectilesDB.firearms; return Array.from(document.getElementById('projSelect').options).filter(o => o.value !== 'custom').map(o => L[+o.value].cal); })()`);
+  ev(`document.getElementById('caliberSelect').value = 'Weatherby Vanguard S2 .300 Win Mag'; onWeaponSelect();`);
+  let cals = optionCals();
+  ok(cals.length > 0 && cals.every(c => c === '.300WM'), `.300 Win Mag rifle offers ONLY .300WM loads (${cals.length}: ${[...new Set(cals)].join(',')})`);
+  ev(`document.getElementById('caliberSelect').value = 'Mossberg 100 ATR .308 Win'; onWeaponSelect();`);
+  cals = optionCals();
+  ok(cals.length > 0 && cals.every(c => c === '.308'), `.308 rifle offers ONLY .308 loads (${cals.length}: ${[...new Set(cals)].join(',')})`);
+  ok(ev(`appState.projectilesDB.firearms[+document.getElementById('projSelect').value].name`) === 'Winchester Power Point .308 180gr', 'default ammo of the weapon is selected');
+  ev(`document.getElementById('caliberSelect').value = 'custom'; onWeaponSelect();`);
+  cals = optionCals();
+  ok(new Set(cals).size > 1 && $('projSelect').querySelectorAll('optgroup').length > 1, 'custom weapon shows every calibre, grouped');
+  ev(`document.getElementById('weaponType').value = 'airgun'; onWeaponTypeChange();`);
+  ev(`document.getElementById('caliberSelect').value = 'SAG AR1000 .22 (5.5mm)'; onWeaponSelect();`);
+  cals = optionCals();
+  ok(cals.length > 0 && cals.every(c => c === '.22'), `.22 airgun offers ONLY .22 pellets/slugs (${cals.length})`);
+  ev(`document.getElementById('weaponType').value = 'firearm'; onWeaponTypeChange();`);
+  // preset round-trip keeps the weapon + its filtered ammo
+  ev(`document.getElementById('caliberSelect').value = 'Weatherby Vanguard S2 .300 Win Mag'; onWeaponSelect();`);
+  const idx300 = ev(`appState.projectilesDB.firearms.findIndex(p => p.cal === '.300WM')`);
+  ev("document.getElementById('projSelect').value = '" + idx300 + "'");
+  const snap = ev('_capturePreset()');
+  ev(`document.getElementById('caliberSelect').value = 'custom'; onWeaponSelect();`);
+  w.__snap = snap; ev('_restorePreset(window.__snap)');
+  ok($('caliberSelect').value === 'Weatherby Vanguard S2 .300 Win Mag' && $('projSelect').value === String(idx300), 'preset restore re-selects the weapon and its ammo');
+
   console.log('\nDOPE log escapes HTML');
   ev(`DOPE.clearAll(); DOPE.add({date:'2026-01-01',weapon:'<img src=x onerror=alert(1)>',ammo:'a',scope:'s',distance:100,distUnit:'m',temp:'5',pressure:'1',humidity:'1',windSpeed:'0',windDir:'0',elevClicks:1,windClicks:1,elevMoa:1,windMoa:1,calcDropMoa:'1',calcWindMoa:'1',groupSize:1,poiResult:'center',notes:'<script>1</script>'}); renderDopeLog();`);
   ok($('dopeTableBody').querySelector('img') === null && $('dopeTableBody').querySelector('script') === null, 'injected markup is not parsed as HTML');

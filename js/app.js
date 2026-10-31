@@ -267,6 +267,8 @@ function populateWeaponSelect() {
 
 function onWeaponSelect() {
   const selVal = document.getElementById('caliberSelect').value;
+  // Re-filter the ammunition list for this weapon's calibre (or show all for "custom")
+  populateProjectileSelect();
   if (selVal === 'custom') { appState.pcpTune = null; return; }
   const w = appState.weaponsDB.find(x => x.name === selVal);
   if (!w) return;
@@ -321,17 +323,50 @@ function onWeaponSelect() {
   updateReticleMagSliderLimits(true);
 }
 
+/**
+ * Fill the ammunition dropdown.
+ * - With a weapon selected, ONLY loads of that weapon's calibre are offered
+ *   (a .300 Win Mag rifle never lists .308 / 6.5 CM / .22 ammo).
+ * - With "custom" weapon, every load is offered, grouped by calibre.
+ * Option values stay the index into the FULL database so presets / onProjectileSelect keep working.
+ */
 function populateProjectileSelect() {
   const type = document.getElementById('weaponType').value;
   const sel = document.getElementById('projSelect');
   const list = type === 'airgun' ? appState.projectilesDB.airgun : appState.projectilesDB.firearms;
+  const prev = sel.value;
+
+  const wName = document.getElementById('caliberSelect').value;
+  const weapon = (wName && wName !== 'custom')
+    ? appState.weaponsDB.find(w => w.name === wName && w.type === type) : null;
+  const cal = weapon ? weapon.caliber : null;
+
   sel.innerHTML = `<option value="custom">${I18n.t('custom')}</option>`;
-  list.forEach((p, i) => {
+  const items = list.map((p, i) => ({ p, i })).filter(({ p }) => !cal || p.cal === cal);
+
+  const label = ({ p, i }) => {
     const opt = document.createElement('option');
     opt.value = i;
-    opt.textContent = p.name;
-    sel.appendChild(opt);
-  });
+    opt.textContent = (p.bcVerified === false ? '⚠ ' : '') + p.name;
+    if (p.bcVerified === false) opt.title = I18n.getLang() === 'es' ? 'BC sin verificar con el fabricante' : 'BC not verified with the manufacturer';
+    return opt;
+  };
+  // Chilean-market loads first, then by weight
+  const byPopularity = (a, b) => (b.p.chile ? 1 : 0) - (a.p.chile ? 1 : 0) || (a.p.weightGr - b.p.weightGr);
+
+  if (cal) {
+    items.sort(byPopularity).forEach(it => sel.appendChild(label(it)));
+  } else {
+    const groups = {};
+    items.forEach(it => { (groups[it.p.cal || '—'] = groups[it.p.cal || '—'] || []).push(it); });
+    Object.keys(groups).forEach(c => {
+      const grp = document.createElement('optgroup');
+      grp.label = c;
+      groups[c].sort(byPopularity).forEach(it => grp.appendChild(label(it)));
+      sel.appendChild(grp);
+    });
+  }
+  if (prev && Array.from(sel.options).some(o => o.value === prev)) sel.value = prev;
 }
 
 function onProjectileSelect() {
@@ -1825,6 +1860,11 @@ function _restorePreset(data) {
   if (data.weaponType) {
     document.getElementById('weaponType').value = data.weaponType;
     populateWeaponSelect();
+    // Select the saved weapon BEFORE building the ammo list so it is filtered to its calibre
+    const wSel = document.getElementById('caliberSelect');
+    if (data.caliberSelect != null && Array.from(wSel.options).some(o => o.value === data.caliberSelect)) {
+      wSel.value = data.caliberSelect;
+    }
     populateProjectileSelect();
   }
 
