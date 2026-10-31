@@ -1,0 +1,137 @@
+{
+  "reticles": [
+    {
+      "id": "mildot",
+      "name": "Mil-Dot",
+      "unit": "mil",
+      "type": "dots",
+      "description": "Standard mil-dot with 1 MIL spacing between dot centers",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0.2,
+        "centerGapMil": 0.5,
+        "marksAbove": 4,
+        "marksBelow": 4,
+        "marksLeft": 4,
+        "marksRight": 4,
+        "markSpacing": 1.0,
+        "halfMarks": false,
+        "markShape": "dot",
+        "thickPostLengthMil": 0,
+        "thickPostWidthMil": 0
+      }
+    },
+    {
+      "id": "tmr",
+      "name": "TMR (Tactical Milling)",
+      "unit": "mil",
+      "type": "hash",
+      "description": "Hashes instead of dots for cleaner sight picture, with half-mil marks",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0,
+        "centerGapMil": 0.5,
+        "marksAbove": 5,
+        "marksBelow": 5,
+        "marksLeft": 5,
+        "marksRight": 5,
+        "markSpacing": 1.0,
+        "halfMarks": true,
+        "markShape": "hash",
+        "hashLengthMil": 0.3,
+        "halfHashLengthMil": 0.15,
+        "thickPostLengthMil": 0,
+        "thickPostWidthMil": 0
+      }
+    },
+    {
+      "id": "moahash",
+      "name": "MOA Hash",
+      "unit": "moa",
+      "type": "hash",
+      "description": "Hash marks at 1 MOA intervals for MOA-based holdovers",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0,
+        "centerGapMil": 0.5,
+        "marksAbove": 15,
+        "marksBelow": 30,
+        "marksLeft": 15,
+        "marksRight": 15,
+        "markSpacing": 1.0,
+        "halfMarks": false,
+        "markShape": "hash",
+        "hashLengthMoa": 0.5,
+        "thickPostLengthMil": 0,
+        "thickPostWidthMil": 0
+      }
+    },
+    {
+      "id": "duplex",
+      "name": "Duplex",
+      "unit": "none",
+      "type": "duplex",
+      "description": "Thick outer posts tapering to fine crosshair. Classic hunting reticle",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0,
+        "centerGapMil": 0,
+        "marksAbove": 0,
+        "marksBelow": 0,
+        "marksLeft": 0,
+        "marksRight": 0,
+        "markSpacing": 0,
+        "halfMarks": false,
+        "markShape": "none",
+        "thickPostLengthMil": 10,
+        "thickPostWidthMil": 0.8,
+        "thinCrosshairLengthMil": 5,
+        "hasTopPost": true
+      }
+    },
+    {
+      "id": "german4",
+      "name": "German #4",
+      "unit": "none",
+      "type": "german4",
+      "description": "Three thick posts (no heavy top post) with fine crosshair. European hunting style",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0,
+        "centerGapMil": 0,
+        "marksAbove": 0,
+        "marksBelow": 0,
+        "marksLeft": 0,
+        "marksRight": 0,
+        "markSpacing": 0,
+        "halfMarks": false,
+        "markShape": "none",
+        "thickPostLengthMil": 10,
+        "thickPostWidthMil": 0.8,
+        "thinCrosshairLengthMil": 5,
+        "hasTopPost": false
+      }
+    },
+    {
+      "id": "crosshair",
+      "name": "Crosshair",
+      "unit": "none",
+      "type": "crosshair",
+      "description": "Simple fine crosshair. Basic reticle for casual shooting",
+      "render": {
+        "crosshairThicknessMil": 0.05,
+        "dotDiameterMil": 0,
+        "centerGapMil": 0.25,
+        "marksAbove": 0,
+        "marksBelow": 0,
+        "marksLeft": 0,
+        "marksRight": 0,
+        "markSpacing": 0,
+        "halfMarks": false,
+        "markShape": "none",
+        "thickPostLengthMil": 0,
+        "thickPostWidthMil": 0
+      }
+    }
+  ]
+}

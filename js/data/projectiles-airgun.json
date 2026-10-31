@@ -1,0 +1,49 @@
+{
+  "airgun": [
+    {"name":"JSB Exact RS .177","cal":".177","diamIn":0.177,"lengthIn":0.240,"weightGr":7.33,"bcGA":0.020,"bcG1":0.016,"type":"pellet"},
+    {"name":"JSB Exact Heavy .177","cal":".177","diamIn":0.177,"lengthIn":0.260,"weightGr":10.34,"bcGA":0.031,"bcG1":0.025,"type":"pellet"},
+    {"name":"JSB Exact Monster .177","cal":".177","diamIn":0.177,"lengthIn":0.310,"weightGr":13.43,"bcGA":0.036,"bcG1":0.029,"type":"pellet"},
+    {"name":"H&N Baracuda Match .177","cal":".177","diamIn":0.177,"lengthIn":0.285,"weightGr":10.65,"bcGA":0.033,"bcG1":0.026,"type":"pellet"},
+
+    {"name":"JSB Exact Jumbo RS .22","cal":".22","diamIn":0.217,"lengthIn":0.255,"weightGr":13.43,"bcGA":0.021,"bcG1":0.017,"type":"pellet"},
+    {"name":"JSB Exact Jumbo Express .22","cal":".22","diamIn":0.217,"lengthIn":0.265,"weightGr":14.30,"bcGA":0.033,"bcG1":0.026,"type":"pellet"},
+    {"name":"JSB Exact Jumbo .22","cal":".22","diamIn":0.217,"lengthIn":0.280,"weightGr":15.89,"bcGA":0.031,"bcG1":0.024,"type":"pellet"},
+    {"name":"JSB Exact Jumbo Heavy .22","cal":".22","diamIn":0.217,"lengthIn":0.300,"weightGr":18.13,"bcGA":0.035,"bcG1":0.028,"type":"pellet"},
+    {"name":"JSB Exact Jumbo Monster .22","cal":".22","diamIn":0.217,"lengthIn":0.340,"weightGr":25.39,"bcGA":0.038,"bcG1":0.030,"type":"pellet"},
+    {"name":"JSB Exact Jumbo Beast .22","cal":".22","diamIn":0.217,"lengthIn":0.380,"weightGr":34.00,"bcGA":0.047,"bcG1":0.038,"type":"pellet"},
+    {"name":"JSB Hades .22","cal":".22","diamIn":0.217,"lengthIn":0.275,"weightGr":15.89,"bcGA":0.026,"bcG1":0.021,"type":"pellet","notes":"Punta hueca tipo Hades, expansión"},
+    {"name":"JSB Exact .22 (1.03g Strelok)","cal":".22","diamIn":0.217,"lengthIn":0.280,"weightGr":15.89,"bcGA":0.031,"bcG1":0.028,"type":"pellet","muzzleVelFps":617,"notes":"JSB Exact 1.03g para SAG AR1000. Verificado vs Strelok+"},
+    {"name":"H&N Field Target Trophy .22","cal":".22","diamIn":0.217,"lengthIn":0.260,"weightGr":14.66,"bcGA":0.024,"bcG1":0.019,"type":"pellet"},
+    {"name":"H&N Baracuda Match .22","cal":".22","diamIn":0.217,"lengthIn":0.310,"weightGr":21.14,"bcGA":0.039,"bcG1":0.031,"type":"pellet"},
+    {"name":"H&N Baracuda Hunter .22","cal":".22","diamIn":0.217,"lengthIn":0.290,"weightGr":18.21,"bcGA":0.026,"bcG1":0.021,"type":"pellet","notes":"Punta hueca para caza"},
+    {"name":"H&N Baracuda 18 .22","cal":".22","diamIn":0.217,"lengthIn":0.295,"weightGr":18.13,"bcGA":0.029,"bcG1":0.023,"type":"pellet"},
+    {"name":"H&N Terminator .22","cal":".22","diamIn":0.217,"lengthIn":0.270,"weightGr":16.36,"bcGA":0.018,"bcG1":0.014,"type":"pellet","notes":"Punta hueca expansiva extrema"},
+    {"name":"H&N Hornet .22","cal":".22","diamIn":0.217,"lengthIn":0.275,"weightGr":16.20,"bcGA":0.023,"bcG1":0.018,"type":"pellet","notes":"Punta hueca con inserto metálico"},
+    {"name":"Gamo Expander .22 (1g) HP","cal":".22","diamIn":0.217,"lengthIn":0.270,"weightGr":15.42,"bcGA":0.021,"bcG1":0.017,"type":"pellet","notes":"Punta hueca, expansión para caza"},
+    {"name":"Gamo Pro Match .22 (1g) WC","cal":".22","diamIn":0.217,"lengthIn":0.250,"weightGr":15.42,"bcGA":0.017,"bcG1":0.014,"type":"pellet","notes":"Wadcutter plano, precisión corta distancia"},
+
+    {"name":"JSB Exact King .25","cal":".25","diamIn":0.250,"lengthIn":0.330,"weightGr":25.39,"bcGA":0.038,"bcG1":0.030,"type":"pellet"},
+    {"name":"JSB Exact King Heavy MKII .25","cal":".25","diamIn":0.250,"lengthIn":0.370,"weightGr":33.95,"bcGA":0.046,"bcG1":0.037,"type":"pellet"},
+    {"name":"JSB Hades .25","cal":".25","diamIn":0.250,"lengthIn":0.325,"weightGr":26.54,"bcGA":0.032,"bcG1":0.026,"type":"pellet","notes":"Punta hueca tipo Hades, expansión"},
+    {"name":"H&N Baracuda .25","cal":".25","diamIn":0.250,"lengthIn":0.350,"weightGr":31.02,"bcGA":0.043,"bcG1":0.035,"type":"pellet"},
+
+    {"name":"JSB Exact .30","cal":".30","diamIn":0.308,"lengthIn":0.380,"weightGr":44.75,"bcGA":0.040,"bcG1":0.032,"type":"pellet"},
+
+    {"name":"JSB Exact 9mm","cal":"9mm","diamIn":0.356,"lengthIn":0.420,"weightGr":81.02,"bcGA":0.065,"bcG1":0.052,"type":"pellet"},
+
+    {"name":"JSB KnockOut Slug .22 (25.4gr)","cal":".22","diamIn":0.217,"lengthIn":0.440,"weightGr":25.39,"bcG1":0.084,"type":"slug"},
+    {"name":"JSB KnockOut Slug .25 (33.5gr)","cal":".25","diamIn":0.250,"lengthIn":0.470,"weightGr":33.49,"bcG1":0.090,"type":"slug"},
+    {"name":"H&N Slug HP .22 (21gr)","cal":".22","diamIn":0.217,"lengthIn":0.400,"weightGr":21.00,"bcG1":0.091,"type":"slug"},
+    {"name":"H&N Slug HP .22 (23gr)","cal":".22","diamIn":0.217,"lengthIn":0.415,"weightGr":23.00,"bcG1":0.094,"type":"slug"},
+    {"name":"H&N Slug HP .22 (25gr)","cal":".22","diamIn":0.217,"lengthIn":0.430,"weightGr":25.00,"bcG1":0.098,"type":"slug"},
+    {"name":"H&N Slug HP .22 (27gr)","cal":".22","diamIn":0.217,"lengthIn":0.445,"weightGr":27.00,"bcG1":0.102,"type":"slug"},
+    {"name":"H&N Slug HP .22 (30gr)","cal":".22","diamIn":0.217,"lengthIn":0.460,"weightGr":30.00,"bcG1":0.106,"type":"slug"},
+    {"name":"H&N Grizzly .25 (31gr)","cal":".25","diamIn":0.250,"lengthIn":0.450,"weightGr":31.00,"bcG1":0.070,"type":"slug"},
+    {"name":"H&N Slug HP .25 (34gr)","cal":".25","diamIn":0.250,"lengthIn":0.470,"weightGr":34.00,"bcG1":0.102,"type":"slug"},
+    {"name":"H&N Slug HP .25 (36gr)","cal":".25","diamIn":0.250,"lengthIn":0.480,"weightGr":36.00,"bcG1":0.105,"type":"slug"},
+    {"name":"FX Hybrid Slug .22 (25.4gr)","cal":".22","diamIn":0.217,"lengthIn":0.450,"weightGr":25.40,"bcG1":0.065,"bcG7":0.033,"type":"slug"},
+    {"name":"FX Hybrid Slug .25 (34gr)","cal":".25","diamIn":0.250,"lengthIn":0.480,"weightGr":34.00,"bcG1":0.080,"bcG7":0.040,"type":"slug"},
+    {"name":"FX Hybrid Slug .30 (44.7gr)","cal":".30","diamIn":0.308,"lengthIn":0.500,"weightGr":44.70,"bcG1":0.095,"bcG7":0.048,"type":"slug"},
+    {"name":"NSA Or. Slug .22 (21.6gr)","cal":".22","diamIn":0.217,"lengthIn":0.420,"weightGr":21.60,"bcG1":0.060,"bcG7":0.030,"type":"slug"}
+  ]
+}

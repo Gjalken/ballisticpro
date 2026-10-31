@@ -1,0 +1,1460 @@
+{
+  "meta": {
+    "sources": [
+      "SAG Chile — Ley de Caza N° 19.473, Reglamento DS 05/1998 (edición 2017)",
+      "Artículo 5° — Especies reguladas con cuotas y temporadas",
+      "Artículo 6° — Especies dañinas (caza ilimitada todo el año)",
+      "BASC (British Association for Shooting & Conservation) — airgun energy guidelines",
+      "AAHC (American Airgun Hunting Council) — species energy tables"
+    ],
+    "lastUpdated": "2026-05",
+    "dataYear": 2026,
+    "zones": {
+      "N": "Zona Norte: Regiones XV, I, II, III (Arica y Parinacota a Atacama)",
+      "C": "Zona Centro: Regiones IV, V, VI, VII (Coquimbo a Maule)",
+      "S": "Zona Sur: Regiones VIII, IX, XIV, X (Bío Bío a Los Lagos)",
+      "A": "Zona Austral: Regiones XI, XII (Aysén y Magallanes)"
+    },
+    "warning_es": "Temporadas, cuotas y zonas son REFERENCIALES según Ley 19.473/Reglamento 2017. Verifique SIEMPRE la resolución vigente en sag.gob.cl. El SAG puede suspender o modificar temporadas.",
+    "warning_en": "Seasons, quotas and zones are REFERENTIAL per Law 19.473/Regulation 2017. ALWAYS verify current resolution at sag.gob.cl.",
+    "updateUrl": "https://gjalken.github.io/ballistic-data/game-animals.json"
+  },
+  "animals": [
+    {
+      "id": "perdiz_chilena",
+      "nameEs": "Perdiz chilena",
+      "nameEn": "Chilean tinamou",
+      "scientificName": "Nothoprocta perdicaria",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 8,
+      "weightKg": 0.4,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 2,
+          "season": "1 Jun — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "yeco",
+      "nameEs": "Yeco",
+      "nameEn": "Neotropic cormorant",
+      "scientificName": "Phalacrocorax brasilianus",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 6,
+      "minEnergyFPE": 15,
+      "weightKg": 1.3,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 15,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 15,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 10,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 10,
+          "season": "1 Abr — 31 Ago"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "caiquen",
+      "nameEs": "Caiquén",
+      "nameEn": "Upland goose",
+      "scientificName": "Chloephaga picta",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 10,
+      "minEnergyFPE": 30,
+      "weightKg": 3.2,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 10,
+          "season": "1 Abr — 31 Ago"
+        }
+      ],
+      "bodyHeightCm": 40,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "canquen",
+      "nameEs": "Canquén",
+      "nameEn": "Ashy-headed goose",
+      "scientificName": "Chloephaga poliocephala",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 8,
+      "minEnergyFPE": 25,
+      "weightKg": 2.5,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": "0/5",
+          "season": "1 Abr — 31 Jul",
+          "notes": "0 en Aysén, 5 en Magallanes"
+        }
+      ],
+      "bodyHeightCm": 35,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_criollo",
+      "nameEs": "Pato criollo",
+      "nameEn": "Muscovy duck",
+      "scientificName": "Cairina moschata",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 7,
+      "minEnergyFPE": 20,
+      "weightKg": 3,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 40,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_juarjual",
+      "nameEs": "Pato juarjual",
+      "nameEn": "Crested duck",
+      "scientificName": "Lophonetta specularioides",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 12,
+      "weightKg": 1,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": "0/5",
+          "season": "1 Abr — 31 Jul",
+          "notes": "0 en Aysén, 5 en Magallanes"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_real",
+      "nameEs": "Pato real",
+      "nameEn": "Chiloé wigeon",
+      "scientificName": "Anas sibilatrix",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 12,
+      "weightKg": 0.8,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_jergon_grande",
+      "nameEs": "Pato jergón grande",
+      "nameEn": "Yellow-billed pintail",
+      "scientificName": "Anas georgica",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 12,
+      "weightKg": 0.7,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 10,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 10,
+          "season": "1 Abr — 31 Jul"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_jergon_chico",
+      "nameEs": "Pato jergón chico",
+      "nameEn": "Yellow-billed teal",
+      "scientificName": "Anas flavirostris",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 10,
+      "weightKg": 0.4,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        }
+      ],
+      "bodyHeightCm": 25,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "pato_colorado",
+      "nameEs": "Pato colorado",
+      "nameEn": "Cinnamon teal",
+      "scientificName": "Anas cyanoptera",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 10,
+      "weightKg": 0.4,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 28,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "codorniz",
+      "nameEs": "Codorniz",
+      "nameEn": "California quail",
+      "scientificName": "Callipepla californica",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.18,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 15,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 25,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 25,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 18,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "tagua",
+      "nameEs": "Tagua común",
+      "nameEn": "Red-gartered coot",
+      "scientificName": "Fulica armillata",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 15,
+      "weightKg": 0.9,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 3,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "tagua_chica",
+      "nameEs": "Tagua chica",
+      "nameEn": "White-winged coot",
+      "scientificName": "Fulica leucoptera",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 12,
+      "weightKg": 0.6,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 3,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 22,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "tortola_cordillerana",
+      "nameEs": "Tórtola cordillerana",
+      "nameEn": "Bare-faced ground dove",
+      "scientificName": "Metriopelia melanoptera",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2.5,
+      "minEnergyFPE": 4,
+      "weightKg": 0.08,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 18,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "tortola",
+      "nameEs": "Tórtola",
+      "nameEn": "Eared dove",
+      "scientificName": "Zenaida auriculata",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2.5,
+      "minEnergyFPE": 4,
+      "weightKg": 0.15,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 20,
+          "season": "1 Abr — 15 Ago",
+          "notes": "Solo III Región"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 50,
+          "season": "1 Abr — 15 Ago",
+          "notes": "IV Región: cuota 30"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 50,
+          "season": "1 Abr — 15 Ago"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 20,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "paloma_alas_blancas",
+      "nameEs": "Paloma de alas blancas",
+      "nameEn": "White-winged dove",
+      "scientificName": "Zenaida asiatica",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 3,
+      "minEnergyFPE": 5,
+      "weightKg": 0.15,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 8,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 20,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "zorzal",
+      "nameEs": "Zorzal",
+      "nameEn": "Austral thrush",
+      "scientificName": "Turdus falcklandii",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.1,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 5,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 5,
+          "season": "1 Abr — 31 Ago"
+        }
+      ],
+      "bodyHeightCm": 16,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "chirihue_dorado",
+      "nameEs": "Chirihue dorado",
+      "nameEn": "Greater yellow finch",
+      "scientificName": "Sicalis auriventris",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 2,
+      "weightKg": 0.03,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 4,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 4,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "chirihue",
+      "nameEs": "Chirihue",
+      "nameEn": "Grassland yellow finch",
+      "scientificName": "Sicalis luteiventris",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 2,
+      "weightKg": 0.02,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 4,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 4,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "mirlo",
+      "nameEs": "Mirlo",
+      "nameEn": "Shiny cowbird",
+      "scientificName": "Molothrus bonariensis",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.05,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 10,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 10,
+          "season": "1 Abr — 31 Ago"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "tordo",
+      "nameEs": "Tordo",
+      "nameEn": "Austral blackbird",
+      "scientificName": "Curaeus curaeus",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.1,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "yal",
+      "nameEs": "Yal",
+      "nameEn": "Mourning sierra finch",
+      "scientificName": "Phrygilus fruticeti",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 2,
+      "weightKg": 0.03,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "diuca",
+      "nameEs": "Diuca",
+      "nameEn": "Common diuca finch",
+      "scientificName": "Diuca diuca",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 2,
+      "weightKg": 0.03,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 0,
+          "season": "—"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "jilguero",
+      "nameEs": "Jilguero",
+      "nameEn": "Black-chinned siskin",
+      "scientificName": "Carduelis barbatus",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 1,
+      "weightKg": 0.015,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 2,
+          "season": "1 Abr — 31 Jul"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "faisan",
+      "nameEs": "Faisán",
+      "nameEn": "Ring-necked pheasant",
+      "scientificName": "Phasianus colchicus",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 15,
+      "weightKg": 1.2,
+      "regulations": [
+        {
+          "zone": "Nacional (todas las zonas)",
+          "quota": "Ilimitado",
+          "season": "1 Mar — 31 Ago"
+        }
+      ],
+      "bodyHeightCm": 40,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "traro",
+      "nameEs": "Traro",
+      "nameEn": "Southern caracara",
+      "scientificName": "Polyborus plancus",
+      "category": "menor",
+      "region": "CL",
+      "status": "regulada",
+      "vitalZoneCm": 8,
+      "minEnergyFPE": 20,
+      "weightKg": 1.6,
+      "regulations": [
+        {
+          "zone": "Norte (XV–III)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Centro (IV–VII)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Sur (VIII–X)",
+          "quota": 0,
+          "season": "—"
+        },
+        {
+          "zone": "Austral (XI–XII)",
+          "quota": 3,
+          "season": "1 Abr — 31 Jul"
+        }
+      ],
+      "bodyHeightCm": 35,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "paloma",
+      "nameEs": "Paloma asilvestrada",
+      "nameEn": "Feral pigeon",
+      "scientificName": "Columba livia",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 3,
+      "minEnergyFPE": 5,
+      "weightKg": 0.35,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 22,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "gorrion",
+      "nameEs": "Gorrión",
+      "nameEn": "House sparrow",
+      "scientificName": "Passer domesticus",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 1.5,
+      "minEnergyFPE": 2,
+      "weightKg": 0.03,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 10,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "cotorra",
+      "nameEs": "Cotorra argentina",
+      "nameEn": "Monk parakeet",
+      "scientificName": "Myiopsitta monachus",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 2.5,
+      "minEnergyFPE": 4,
+      "weightKg": 0.12,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 18,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "conejo",
+      "nameEs": "Conejo",
+      "nameEn": "European rabbit",
+      "scientificName": "Oryctolagus cuniculus",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 5,
+      "minEnergyFPE": 12,
+      "weightKg": 1.8,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 20,
+      "silhouetteType": "rabbit"
+    },
+    {
+      "id": "liebre",
+      "nameEs": "Liebre",
+      "nameEn": "European hare",
+      "scientificName": "Lepus europaeus",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 7,
+      "minEnergyFPE": 12,
+      "weightKg": 3.5,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "rabbit"
+    },
+    {
+      "id": "vison",
+      "nameEs": "Visón",
+      "nameEn": "American mink",
+      "scientificName": "Mustela vison",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 15,
+      "weightKg": 1.2,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 20,
+      "silhouetteType": "fox"
+    },
+    {
+      "id": "castor",
+      "nameEs": "Castor",
+      "nameEn": "North American beaver",
+      "scientificName": "Castor canadensis",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 8,
+      "minEnergyFPE": 30,
+      "weightKg": 20,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 30,
+      "silhouetteType": "generic"
+    },
+    {
+      "id": "rata_almizclera",
+      "nameEs": "Rata almizclera",
+      "nameEn": "Muskrat",
+      "scientificName": "Ondatra zibethica",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 8,
+      "weightKg": 1,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 12,
+      "silhouetteType": "generic"
+    },
+    {
+      "id": "zorro_gris",
+      "nameEs": "Zorro gris / Chilla",
+      "nameEn": "South American gray fox",
+      "scientificName": "Pseudalopex griseus",
+      "category": "menor",
+      "region": "CL",
+      "status": "especial",
+      "vitalZoneCm": 10,
+      "minEnergyFPE": 25,
+      "weightKg": 3.5,
+      "regulations": [
+        {
+          "zone": "Isla Tierra del Fuego (XII Región)",
+          "season": "Todo el año",
+          "quota": "Sin límite",
+          "notes": "Para traslado de pieles fuera de la isla, obtener guía de tránsito en SAG Porvenir"
+        },
+        {
+          "zone": "Continente",
+          "season": "PROTEGIDA",
+          "quota": "—"
+        }
+      ],
+      "bodyHeightCm": 40,
+      "silhouetteType": "fox"
+    },
+    {
+      "id": "burro_asilvestrado",
+      "nameEs": "Burro asilvestrado",
+      "nameEn": "Feral donkey",
+      "scientificName": "Equus asinus",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 25,
+      "minEnergyFPE": 1000,
+      "weightKg": 200,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite",
+          "notes": "Solo con arma de fuego"
+        }
+      ],
+      "bodyHeightCm": 130,
+      "silhouetteType": "equine"
+    },
+    {
+      "id": "bagual",
+      "nameEs": "Bagual (vacuno asilvestrado)",
+      "nameEn": "Feral cattle",
+      "scientificName": "Bos taurus",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 30,
+      "minEnergyFPE": 1500,
+      "weightKg": 400,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite",
+          "notes": "Solo con arma de fuego"
+        }
+      ],
+      "bodyHeightCm": 140,
+      "silhouetteType": "bovine"
+    },
+    {
+      "id": "guanaco",
+      "nameEs": "Guanaco",
+      "nameEn": "Guanaco",
+      "scientificName": "Lama guanicoe",
+      "category": "mayor",
+      "region": "CL",
+      "status": "especial",
+      "vitalZoneCm": 20,
+      "minEnergyFPE": 800,
+      "weightKg": 120,
+      "regulations": [
+        {
+          "zone": "Isla Tierra del Fuego (XII Región)",
+          "season": "Regulada por SAG",
+          "quota": "Con permiso SAG",
+          "notes": "Requiere autorización especial del SAG. Control poblacional."
+        },
+        {
+          "zone": "Continente",
+          "season": "PROTEGIDA",
+          "quota": "—"
+        }
+      ],
+      "bodyHeightCm": 120,
+      "silhouetteType": "camelid"
+    },
+    {
+      "id": "zorzal_jf",
+      "nameEs": "Zorzal (Juan Fernández)",
+      "nameEn": "Austral thrush (J. Fernández)",
+      "scientificName": "Turdus falcklandii",
+      "category": "menor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.1,
+      "regulations": [
+        {
+          "zone": "Archipiélago Juan Fernández (V Región)",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 15,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "cabra_asilvestrada",
+      "nameEs": "Cabra asilvestrada",
+      "nameEn": "Feral goat",
+      "scientificName": "Capra hircus",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 18,
+      "minEnergyFPE": 800,
+      "weightKg": 50,
+      "regulations": [
+        {
+          "zone": "Archipiélago Juan Fernández (V Región)",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 70,
+      "silhouetteType": "goat"
+    },
+    {
+      "id": "jabali",
+      "nameEs": "Jabalí",
+      "nameEn": "Wild boar",
+      "scientificName": "Sus scrofa",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 20,
+      "minEnergyFPE": 1000,
+      "weightKg": 90,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 70,
+      "silhouetteType": "boar"
+    },
+    {
+      "id": "ciervo_rojo",
+      "nameEs": "Ciervo rojo",
+      "nameEn": "Red deer",
+      "scientificName": "Cervus elaphus",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 30,
+      "minEnergyFPE": 1500,
+      "weightKg": 200,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 130,
+      "silhouetteType": "deer"
+    },
+    {
+      "id": "gamo",
+      "nameEs": "Gamo / Ciervo dama",
+      "nameEn": "Fallow deer",
+      "scientificName": "Dama dama",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 22,
+      "minEnergyFPE": 800,
+      "weightKg": 70,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 90,
+      "silhouetteType": "deer"
+    },
+    {
+      "id": "corzo",
+      "nameEs": "Corzo",
+      "nameEn": "Roe deer",
+      "scientificName": "Capreolus capreolus",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 15,
+      "minEnergyFPE": 500,
+      "weightKg": 25,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 65,
+      "silhouetteType": "deer"
+    },
+    {
+      "id": "ciervo_axis",
+      "nameEs": "Ciervo axis",
+      "nameEn": "Axis deer / Chital",
+      "scientificName": "Axis axis",
+      "category": "mayor",
+      "region": "CL",
+      "status": "dañina",
+      "vitalZoneCm": 22,
+      "minEnergyFPE": 800,
+      "weightKg": 75,
+      "regulations": [
+        {
+          "zone": "Nacional",
+          "season": "Todo el año",
+          "quota": "Sin límite"
+        }
+      ],
+      "bodyHeightCm": 90,
+      "silhouetteType": "deer"
+    },
+    {
+      "id": "estornino",
+      "nameEs": "Estornino pinto",
+      "nameEn": "European starling",
+      "scientificName": "Sturnus vulgaris",
+      "category": "menor",
+      "region": "INT",
+      "status": "dañina",
+      "vitalZoneCm": 2,
+      "minEnergyFPE": 3,
+      "weightKg": 0.08,
+      "bodyHeightCm": 15,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "ardilla",
+      "nameEs": "Ardilla gris",
+      "nameEn": "Gray squirrel",
+      "scientificName": "Sciurus carolinensis",
+      "category": "menor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 3,
+      "minEnergyFPE": 8,
+      "weightKg": 0.5,
+      "bodyHeightCm": 15,
+      "silhouetteType": "rabbit"
+    },
+    {
+      "id": "cuervo",
+      "nameEs": "Cuervo / Corneja",
+      "nameEn": "Crow / Rook",
+      "scientificName": "Corvus spp.",
+      "category": "menor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 4,
+      "minEnergyFPE": 8,
+      "weightKg": 0.5,
+      "bodyHeightCm": 25,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "coyote",
+      "nameEs": "Coyote",
+      "nameEn": "Coyote",
+      "scientificName": "Canis latrans",
+      "category": "menor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 15,
+      "minEnergyFPE": 300,
+      "weightKg": 15,
+      "bodyHeightCm": 50,
+      "silhouetteType": "fox"
+    },
+    {
+      "id": "pavo_salvaje",
+      "nameEs": "Pavo salvaje",
+      "nameEn": "Wild turkey",
+      "scientificName": "Meleagris gallopavo",
+      "category": "menor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 12,
+      "minEnergyFPE": 200,
+      "weightKg": 8,
+      "bodyHeightCm": 45,
+      "silhouetteType": "bird"
+    },
+    {
+      "id": "venado_cola_blanca",
+      "nameEs": "Venado cola blanca",
+      "nameEn": "White-tailed deer",
+      "scientificName": "Odocoileus virginianus",
+      "category": "mayor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 22,
+      "minEnergyFPE": 800,
+      "weightKg": 80,
+      "bodyHeightCm": 100,
+      "silhouetteType": "deer"
+    },
+    {
+      "id": "alce",
+      "nameEs": "Alce / Wapití",
+      "nameEn": "Elk / Wapiti",
+      "scientificName": "Cervus canadensis",
+      "category": "mayor",
+      "region": "INT",
+      "status": "regulada",
+      "vitalZoneCm": 38,
+      "minEnergyFPE": 1500,
+      "weightKg": 330,
+      "bodyHeightCm": 180,
+      "silhouetteType": "deer"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "weapons": [
+    {
+      "name": "Weatherby Vanguard S2 .300 Win Mag",
+      "type": "firearm",
+      "caliber": ".300WM",
+      "barrelLengthIn": 24,
+      "twistRateIn": 10,
+      "twistDir": 1,
+      "scopeHeightIn": 1.93,
+      "zeroRangeYd": 200,
+      "clickElev": "0.125",
+      "clickWind": "0.125",
+      "magMin": 6,
+      "magMax": 24,
+      "magRef": 12,
+      "focalPlane": "SFP",
+      "defaultAmmo": "Winchester Power Point .300WM 180gr",
+      "notes": "Cañón button-rifled 24\", acción Howa 1500. Datos de Strelok+: scope 4.9cm, click 1/8 MOA"
+    },
+    {
+      "name": "Mossberg 100 ATR .308 Win",
+      "type": "firearm",
+      "caliber": ".308",
+      "barrelLengthIn": 22,
+      "twistRateIn": 10,
+      "twistDir": 1,
+      "scopeHeightIn": 1.50,
+      "zeroRangeYd": 109,
+      "clickElev": "0.25",
+      "clickWind": "0.25",
+      "magMin": 4.5,
+      "magMax": 14,
+      "magRef": 13,
+      "focalPlane": "SFP",
+      "defaultAmmo": "Winchester Power Point .308 180gr",
+      "notes": "Cañón button-rifled free-floating 22\". Datos de Strelok+: scope 3.8cm, zero 100m"
+    },
+    {
+      "name": "SAG AR1000 .22 (5.5mm)",
+      "type": "airgun",
+      "caliber": ".22",
+      "barrelLengthIn": 18.5,
+      "twistRateIn": 16,
+      "twistDir": 1,
+      "scopeHeightIn": 1.50,
+      "zeroRangeYd": 27,
+      "clickElev": "0.25",
+      "clickWind": "0.25",
+      "magMin": 3,
+      "magMax": 12,
+      "magRef": 10,
+      "focalPlane": "SFP",
+      "defaultAmmo": "JSB Exact .22 (1.03g Strelok)",
+      "defaultVelFps": 617,
+      "notes": "Break-barrel spring-piston, riel 11mm, miras TruGlo. Datos de Strelok+: scope 3.8cm, 188 m/s, zero 25m"
+    }
+  ]
+}

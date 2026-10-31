@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BallisticPro — Calculadora balística profesional con efecto Coriolis, spin drift, modelos G1/G7/GA para armas de fuego y aire comprimido">
+  <meta name="theme-color" content="#080b12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BallisticPro — Calculadora Balística Profesional</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="app-container">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="logo-icon">BP</div>
+      <div>
+        <h1>Ballistic<span>Pro</span></h1>
+        <div class="subtitle" data-i18n="appSubtitle">Calculadora Balística Profesional</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="btnTruing" title="Truing" data-i18n-title="truingTitle">🎯</button>
+      <button class="btn-icon" id="btnMPBR" title="MPBR">⊕</button>
+      <button class="btn-icon" id="btnLang" title="Idioma" data-i18n-title="language">🌐</button>
+      <button class="btn-icon" id="btnUnits" title="Unidades" data-i18n-title="unitSystem">📐</button>
+      <button class="btn-icon" id="btnInstall" title="Instalar" data-i18n-title="installApp" style="display:none">📲</button>
+    </div>
+  </header>
+  <main class="app-main">
+    <aside class="sidebar">
+      <!-- Preset / Saved Setups -->
+      <div class="panel" id="panelPreset" style="border-left:3px solid #f59e0b">
+        <div class="panel-header" onclick="togglePanel('panelPreset')">
+          <div class="panel-title"><div class="panel-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">💾</div><span data-i18n="presetTitle">Configuración Guardada</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row full"><div class="form-group"><label data-i18n="presetSelect">Setup</label><select id="presetSelect" onchange="onPresetLoad()"><option value="" data-i18n="presetNone">— Ninguno —</option></select></div></div>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <button class="btn-secondary" onclick="onPresetSave()" style="flex:1;font-size:0.78rem;padding:6px 8px" data-i18n="presetSave">💾 Guardar Actual</button>
+            <button class="btn-secondary" onclick="onPresetDelete()" style="flex:0;font-size:0.78rem;padding:6px 10px;opacity:0.6" title="Eliminar" data-i18n-title="deleteEntry">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="panelWeapon">
+        <div class="panel-header" onclick="togglePanel('panelWeapon')">
+          <div class="panel-title"><div class="panel-icon weapon">🔫</div><span data-i18n="weaponTitle">Perfil del Arma</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row full"><div class="form-group"><label data-i18n="weaponType">Tipo de Arma</label><select id="weaponType" onchange="onWeaponTypeChange()"><option value="firearm" data-i18n="typeFirearm">Arma de Fuego</option><option value="airgun" data-i18n="typeAirgun">Aire Comprimido</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="caliber">Arma / Perfil</label><select id="caliberSelect" onchange="onWeaponSelect()"><option value="custom" data-i18n="custom">— Personalizado —</option></select></div><div class="form-group"><label data-i18n="twistRate">Paso de Estrías</label><div class="input-with-unit"><input type="number" id="twistRate" value="10" step="0.1" min="1"><span class="unit-label">in/t</span></div></div></div>
+          <div class="form-row full"><div class="form-group"><label data-i18n="twistDir">Dir. Estrías</label><select id="twistDir"><option value="1" data-i18n="twistRH">Dextrógiro</option><option value="-1" data-i18n="twistLH">Levógiro</option></select></div></div>
+          <div class="form-row full"><div class="form-group"><label data-i18n="zeroRange">Distancia de Cero</label><div class="input-with-unit"><input type="number" id="zeroRange" value="100" step="1" min="1"><span class="unit-label" id="zeroRangeUnit">yd</span></div></div></div>
+        </div>
+      </div>
+      <div class="panel" id="panelOptics">
+        <div class="panel-header" onclick="togglePanel('panelOptics')">
+          <div class="panel-title"><div class="panel-icon optics">🔭</div><span data-i18n="opticsTitle">Perfil de Óptica</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row full"><div class="form-group"><label data-i18n="scopeSelect">Mira</label><select id="scopeSelect" onchange="onScopeSelect()"><option value="custom" data-i18n="custom">— Personalizado —</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="scopeHeight">Altura Mira</label><div class="input-with-unit"><input type="number" id="scopeHeight" value="1.5" step="0.1" min="0"><span class="unit-label">in</span></div></div><div class="form-group"><label data-i18n="focalPlane">Plano Focal</label><select id="focalPlane"><option value="SFP" data-i18n="sfpPlane">SFP (2do plano)</option><option value="FFP" data-i18n="ffpPlane">FFP (1er plano)</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="reticleType">Retículo</label><select id="reticleType" onchange="onReticleChange()"><option value="mildot">Mil-Dot</option><option value="tmr">TMR</option><option value="moahash">MOA Hash</option><option value="duplex">Duplex</option><option value="german4">German #4</option><option value="crosshair">Crosshair</option></select></div><div class="form-group"><label data-i18n="reticleUnit">Unidad Retículo</label><select id="reticleUnit"><option value="mil">MIL (MRAD)</option><option value="moa">MOA</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="clickElev">Click Elevación</label><select id="clickElev"><option value="0.25">1/4 MOA</option><option value="0.125">1/8 MOA</option><option value="0.1">0.1 MIL</option><option value="0.5">1/2 MOA</option></select></div><div class="form-group"><label data-i18n="clickWind">Click Windage</label><select id="clickWind"><option value="0.25">1/4 MOA</option><option value="0.125">1/8 MOA</option><option value="0.1">0.1 MIL</option><option value="0.5">1/2 MOA</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="turretUnit">Unidad Torreta</label><select id="turretUnit"><option value="moa">MOA</option><option value="mil">MIL</option></select></div><div class="form-group"><label data-i18n="magRef">Mag. Referencia</label><div class="input-with-unit"><input type="number" id="magRef" value="14" step="1" min="1"><span class="unit-label">x</span></div></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="magMin">Mag. Mín</label><div class="input-with-unit"><input type="number" id="magMin" value="4.5" step="0.5" min="1"><span class="unit-label">x</span></div></div><div class="form-group"><label data-i18n="magMax">Mag. Máx</label><div class="input-with-unit"><input type="number" id="magMax" value="14" step="1" min="1"><span class="unit-label">x</span></div></div></div>
+        </div>
+      </div>
+      <div class="panel" id="panelProjectile">
+        <div class="panel-header" onclick="togglePanel('panelProjectile')">
+          <div class="panel-title"><div class="panel-icon projectile">⦿</div><span data-i18n="projTitle">Perfil del Proyectil</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row full"><div class="form-group"><label data-i18n="projName">Proyectil</label><select id="projSelect" onchange="onProjectileSelect()"><option value="custom" data-i18n="custom">— Personalizado —</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="weight">Peso</label><div class="input-with-unit"><input type="number" id="projWeight" value="175" step="0.01" min="0.1"><span class="unit-label">gr</span></div></div><div class="form-group"><label data-i18n="diameter">Diámetro</label><div class="input-with-unit"><input type="number" id="projDiam" value="0.308" step="0.001" min="0.01"><span class="unit-label">in</span></div></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="length">Largo</label><div class="input-with-unit"><input type="number" id="projLength" value="1.24" step="0.001" min="0.01"><span class="unit-label">in</span></div></div><div class="form-group"><label data-i18n="bc">BC</label><input type="number" id="projBC" value="0.264" step="0.001" min="0.001"></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="dragModel">Modelo Arrastre</label><select id="dragModel"><option value="G7">G7 (Boat-tail)</option><option value="G1">G1 (Flat-base)</option><option value="GA">GA (Diábolo/Pellet)</option></select></div><div class="form-group"><label data-i18n="muzzleVel">Vel. de Boca</label><div class="input-with-unit"><input type="number" id="muzzleVel" value="2600" step="1" min="1"><span class="unit-label">fps</span></div></div></div>
+        </div>
+      </div>
+      <div class="panel" id="panelAtmo">
+        <div class="panel-header" onclick="togglePanel('panelAtmo')">
+          <div class="panel-title"><div class="panel-icon atmosphere">🌡</div><span data-i18n="atmoTitle">Condiciones Atmosféricas</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row"><div class="form-group"><label data-i18n="temperature">Temperatura</label><div class="input-with-unit"><input type="number" id="temperature" value="59" step="1"><span class="unit-label">°F</span></div></div><div class="form-group"><label data-i18n="pressure">Presión</label><div class="input-with-unit"><input type="number" id="pressure" value="29.92" step="0.01"><span class="unit-label">inHg</span></div></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="humidity">Humedad Rel.</label><div class="input-with-unit"><input type="number" id="humidity" value="50" step="1" min="0" max="100"><span class="unit-label">%</span></div></div><div class="form-group"><label data-i18n="altitude">Altitud</label><div class="input-with-unit"><input type="number" id="altitude" value="0" step="1"><span class="unit-label">ft</span></div></div></div>
+          <div class="info-row"><span class="info-label" data-i18n="airDensity">Densidad del Aire</span><span class="info-value" id="dispDensity">1.225 kg/m³</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="speedOfSound">Vel. del Sonido</span><span class="info-value" id="dispSoS">340.3 m/s</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="densityAlt">Altitud de Densidad</span><span class="info-value" id="dispDA">0 ft</span></div>
+        </div>
+      </div>
+      <div class="panel" id="panelPosition">
+        <div class="panel-header" onclick="togglePanel('panelPosition')">
+          <div class="panel-title"><div class="panel-icon position">🧭</div><span data-i18n="posTitle">Posición y Geometría</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row"><div class="form-group"><label data-i18n="latitude">Latitud</label><div class="input-with-unit"><input type="text" inputmode="decimal" id="latitude" value="0" pattern="-?[0-9]*\.?[0-9]*"><button type="button" class="btn-toggle-sign" id="btnLatHemi" onclick="toggleLatSign()" title="N/S">N</button><span class="unit-label">°</span></div></div><div class="form-group"><label data-i18n="azimuth">Azimut</label><div class="input-with-unit"><input type="number" id="azimuth" value="0" step="1" min="0" max="360"><span class="unit-label">°</span></div></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="lookAngle">Inclinación</label><div class="input-with-unit"><input type="number" id="lookAngle" value="0" step="0.5" min="-90" max="90"><span class="unit-label">°</span></div></div><div class="form-group"><label data-i18n="cantAngle">Cant</label><div class="input-with-unit"><input type="number" id="cantAngle" value="0" step="0.5"><span class="unit-label">°</span></div></div></div>
+        </div>
+      </div>
+      <div class="panel" id="panelWind">
+        <div class="panel-header" onclick="togglePanel('panelWind')">
+          <div class="panel-title"><div class="panel-icon wind">💨</div><span data-i18n="windTitle">Condiciones de Viento</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row"><div class="form-group"><label data-i18n="windSpeed">Velocidad</label><div class="input-with-unit"><input type="number" id="windSpeed" value="0" step="0.1" min="0"><span class="unit-label">mph</span></div></div><div class="form-group"><label data-i18n="windDir">Dirección</label><div class="input-with-unit"><input type="number" id="windDir" value="90" step="1" min="0" max="360"><span class="unit-label">°</span></div></div></div>
+          <div class="form-row"><div class="form-group"><label data-i18n="windClock">Posición Reloj</label><select id="windClock" onchange="onWindClockChange()"><option value="" data-i18n="windCustom">Personalizado °</option><option value="0" data-i18n="windFront">12 (Frontal)</option><option value="30">1</option><option value="60">2</option><option value="90" data-i18n="windRightPure">3 (Der. puro)</option><option value="120">4</option><option value="150">5</option><option value="180" data-i18n="windTail">6 (Cola)</option><option value="210">7</option><option value="240">8</option><option value="270" data-i18n="windLeftPure">9 (Izq. puro)</option><option value="300">10</option><option value="330">11</option></select></div></div>
+          <div class="info-row"><span class="info-label" data-i18n="crossWind">Cruzado</span><span class="info-value" id="dispCrossWind">0 mph</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="headTailWind">Frontal/Cola</span><span class="info-value" id="dispHeadWind">0 mph</span></div>
+        </div>
+      </div>
+      <div class="panel" id="panelRange">
+        <div class="panel-header" onclick="togglePanel('panelRange')">
+          <div class="panel-title"><div class="panel-icon weapon">📏</div><span data-i18n="maxRange">Rango Máximo</span></div>
+          <span class="panel-chevron">▼</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row"><div class="form-group"><label data-i18n="maxRange">Rango Máx</label><div class="input-with-unit"><input type="number" id="maxRange" value="1000" step="50" min="50"><span class="unit-label" id="maxRangeUnit">yd</span></div></div><div class="form-group"><label data-i18n="rangeStep">Paso</label><div class="input-with-unit"><input type="number" id="rangeStep" value="25" step="5" min="1"><span class="unit-label" id="rangeStepUnit">yd</span></div></div></div>
+        </div>
+      </div>
+      <div class="calculate-section">
+        <button class="btn-calculate" id="btnCalculate" onclick="calculate()">
+          <span data-i18n="calculate">⊕ CALCULAR</span>
+        </button>
+      </div>
+    </aside>
+    <section class="results-area" id="resultsArea">
+      <div class="empty-state" id="emptyState">
+        <div class="crosshair"></div>
+        <h3 data-i18n="appName">BallisticPro</h3>
+        <p>Configure los parámetros del arma, proyectil y condiciones, luego presione <strong>Calcular</strong> para generar la solución balística.</p>
+      </div>
+      <div id="resultsContent" style="display:none">
+        <div class="ballistic-alerts" id="ballisticAlerts"></div>
+        <div class="results-tabs">
+          <button class="tab-btn active" onclick="switchTab('tabRangeCard', this)" data-i18n="rangeCard">Tarjeta de Rango</button>
+          <button class="tab-btn" onclick="switchTab('tabCharts', this)" data-i18n="chart">Gráficos</button>
+          <button class="tab-btn" onclick="switchTab('tabMPBR', this)" data-i18n="mpbrTab">🎯 MPBR</button>
+          <button class="tab-btn" onclick="switchTab('tabReticle', this)" data-i18n="reticleView">🔭 Retículo</button>
+          <button class="tab-btn" onclick="switchTab('tabDOPE', this)" data-i18n="dopeTab">📝 DOPE</button>
+        </div>
+        <div class="tab-content active" id="tabRangeCard">
+          <div class="range-card-container">
+            <table class="range-card-table" id="rangeCardTable">
+              <thead id="rangeCardHead"></thead>
+              <tbody id="rangeCardBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tab-content" id="tabCharts">
+          <div class="chart-container">
+            <h3 data-i18n="trajectory">Trayectoria</h3>
+            <div class="chart-wrapper"><canvas id="chartTrajectory"></canvas></div>
+          </div>
+          <div class="chart-container" style="margin-top:var(--sp-4)">
+            <h3 data-i18n="velocity">Velocidad & Energía</h3>
+            <div class="chart-wrapper"><canvas id="chartVelEnergy"></canvas></div>
+          </div>
+        </div>
+        <div class="tab-content" id="tabMPBR">
+          <div class="chart-container">
+            <h3 data-i18n="mpbrChart">Trayectoria MPBR — Zona Vital</h3>
+            <div class="chart-wrapper"><canvas id="chartMPBR"></canvas></div>
+          </div>
+        </div>
+        <div class="tab-content" id="tabDOPE">
+          <div class="dope-container">
+            <div class="dope-header">
+              <h3 data-i18n="dopeTitle">📝 D.O.P.E. — Registro de Tiro</h3>
+              <div class="dope-actions">
+                <button class="btn-sm" onclick="toggleDopeForm()" id="btnDopeAdd" data-i18n="dopeAdd">+ Agregar</button>
+                <button class="btn-sm" onclick="exportDOPE()">CSV</button>
+                <button class="btn-sm danger" onclick="clearDOPE()">🗑️</button>
+              </div>
+            </div>
+            <div class="dope-stats" id="dopeStats"></div>
+            <div class="dope-form" id="dopeForm" style="display:none">
+              <div class="dope-form-grid">
+                <div class="form-group"><label data-i18n="dopeDate">Fecha</label><input type="date" id="dopeDate"></div>
+                <div class="form-group"><label data-i18n="dopeWeapon">Arma</label><input type="text" id="dopeWeapon" placeholder=".308 Win"></div>
+                <div class="form-group"><label data-i18n="dopeAmmo">Munición</label><input type="text" id="dopeAmmo" placeholder="168gr SMK"></div>
+                <div class="form-group"><label data-i18n="dopeScope">Mira</label><input type="text" id="dopeScope" placeholder="Nikon Buckmaster"></div>
+              </div>
+              <div class="dope-form-grid">
+                <div class="form-group"><label data-i18n="dopeDist">Distancia</label><div class="input-with-unit"><input type="number" id="dopeDist" step="1" min="0"><span class="unit-label" id="dopeDistUnit">yd</span></div></div>
+                <div class="form-group"><label data-i18n="dopeTemp">Temp</label><div class="input-with-unit"><input type="number" id="dopeTemp" step="1"><span class="unit-label" id="dopeTempUnit">°F</span></div></div>
+                <div class="form-group"><label data-i18n="dopeWind">Viento</label><div class="input-with-unit"><input type="number" id="dopeWind" step="0.5" min="0"><span class="unit-label">mph</span></div></div>
+                <div class="form-group"><label data-i18n="dopeWindDir">Dir. Viento</label><div class="input-with-unit"><input type="number" id="dopeWindDir" step="1" min="0" max="360" value="90"><span class="unit-label">°</span></div></div>
+              </div>
+              <div class="dope-form-grid">
+                <div class="form-group"><label data-i18n="dopeElevClicks">Clicks Elev.</label><input type="number" id="dopeElevClicks" step="1"></div>
+                <div class="form-group"><label data-i18n="dopeWindClicks">Clicks Wind.</label><input type="number" id="dopeWindClicks" step="1"></div>
+                <div class="form-group"><label data-i18n="dopeElevMoa">Elev. (MOA)</label><input type="number" id="dopeElevMoa" step="0.25"></div>
+                <div class="form-group"><label data-i18n="dopeWindMoa">Wind. (MOA)</label><input type="number" id="dopeWindMoa" step="0.25"></div>
+              </div>
+              <div class="dope-form-grid">
+                <div class="form-group"><label data-i18n="dopeGroupSize">Grupo (MOA)</label><input type="number" id="dopeGroupSize" step="0.1" min="0"></div>
+                <div class="form-group"><label data-i18n="dopePOI">Resultado POI</label><select id="dopePOI"><option value="center">Centro ✔️</option><option value="high">Alto ⬆️</option><option value="low">Bajo ⬇️</option><option value="left">Izq. ⬅️</option><option value="right">Der. ➡️</option><option value="high-left">Alto-Izq. ↖️</option><option value="high-right">Alto-Der. ↗️</option><option value="low-left">Bajo-Izq. ↙️</option><option value="low-right">Bajo-Der. ↘️</option><option value="miss">Fallo ❌</option></select></div>
+                <div class="form-group full-span"><label data-i18n="dopeNotes">Notas</label><input type="text" id="dopeNotes" placeholder="Primer disparo, espejismo..."></div>
+              </div>
+              <div class="dope-form-actions">
+                <button class="btn-secondary" onclick="autoFillDope()" data-i18n="dopeAutoFill">⚡ Auto-llenar con cálculo</button>
+                <button class="btn-apply" onclick="saveDope()" data-i18n="dopeSave">✔ Guardar Registro</button>
+              </div>
+            </div>
+            <div class="dope-log">
+              <table class="range-card-table" id="dopeTable">
+                <thead id="dopeTableHead"></thead>
+                <tbody id="dopeTableBody"></tbody>
+              </table>
+              <div class="dope-empty" id="dopeEmpty" data-i18n="dopeNoEntries">Sin registros aún. Agrega tu primer tiro.</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-content" id="tabReticle">
+          <div class="reticle-view-container" style="display:flex;flex-direction:row-reverse;flex-wrap:nowrap;gap:8px;align-items:flex-start">
+            <div class="reticle-canvas-wrap" style="flex:1.2 1 0;min-width:300px"><canvas id="reticleCanvas"></canvas></div>
+            <div class="reticle-info-col" style="flex:1 1 0;min-width:0">
+              <div class="reticle-controls">
+                <div class="reticle-control-row">
+                  <label data-i18n="magnification">Magnificación</label>
+                  <input type="range" id="reticleMagSlider" min="1" max="24" step="0.5" value="14">
+                  <span class="mag-value" id="reticleMagValue">14x</span>
+                </div>
+                <div class="reticle-control-row">
+                  <label data-i18n="targetDist">Distancia</label>
+                  <div class="input-with-unit"><input type="number" id="reticleTargetDist" value="300" step="25" min="0"><span class="unit-label" id="reticleDistUnit">yd</span></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                  <label for="showSilhouette" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:var(--fs-xs);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.3px;font-weight:500">Silueta <input type="checkbox" id="showSilhouette" style="accent-color:var(--accent-gold);width:16px;height:16px"></label>
+                  <select id="reticleSilhouetteSelect" style="height:24px;font-size:10px;padding:1px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-primary);border-radius:var(--radius-sm);max-width:100px"></select>
+                  <label for="showDotDist" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:var(--fs-xs);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.3px;font-weight:500">Dist. <input type="checkbox" id="showDotDist" style="accent-color:var(--accent-gold);width:16px;height:16px"></label>
+                  <label for="extendedRange" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:var(--fs-xs);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.3px;font-weight:500">Rng.Ext. <input type="checkbox" id="extendedRange" style="accent-color:var(--accent-gold);width:16px;height:16px"></label>
+                  <span id="extRangeClicks" style="font-size:0.65rem;color:#f59e0b;font-family:var(--font-mono);display:none"></span>
+                </div>
+              </div>
+              <div class="firing-solution" id="firingSolution"></div>
+              <div class="range-estimation" id="rangeEstPanel">
+                <h4 data-i18n="rangeEst">Estimación de Distancia</h4>
+                <div class="form-row">
+                  <div class="form-group"><label data-i18n="targetSize">Tamaño Blanco</label><div class="input-with-unit"><input type="number" id="rangeEstSize" value="45" step="1"><span class="unit-label">cm</span></div></div>
+                  <div class="form-group"><label data-i18n="milsObserved">MILs Observados</label><input type="number" id="rangeEstMils" value="1.5" step="0.1" min="0.1"></div>
+                  <div class="form-group"><label data-i18n="estRange">Dist. Estimada</label><div class="info-value" id="rangeEstResult">300 m / 328 yd</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="modal-overlay" id="truingModal" style="display:none">
+  <div class="modal-panel">
+    <div class="modal-header"><h3>🎯 <span data-i18n="truingTitle">Truing — Calibración</span></h3><button class="btn-icon" onclick="closeTruing()">✕</button></div>
+    <div class="modal-body">
+      <div class="truing-stage">
+        <h4 data-i18n="truingStage1">Etapa 1: Ajuste de Velocidad de Boca</h4>
+        <div class="form-row"><div class="form-group"><label data-i18n="truingDist1">Distancia del tiro</label><div class="input-with-unit"><input type="number" id="truingDist1" value="500" step="25"><span class="unit-label" id="truingDist1Unit">yd</span></div></div></div>
+        <div class="info-row"><span class="info-label" data-i18n="predictedDrop">Drop predicho</span><span class="info-value" id="truingPredDrop1">— in</span></div>
+        <div class="form-row"><div class="form-group"><label data-i18n="actualDrop">Drop REAL medido</label><div class="input-with-unit"><input type="number" id="truingActualDrop1" value="" step="0.1" placeholder="-72.1"><span class="unit-label" id="truingDropUnit1">in</span></div></div></div>
+        <div class="truing-result" id="truingResult1" style="display:none">
+          <div class="info-row"><span class="info-label" data-i18n="mvOriginal">MV Original</span><span class="info-value" id="truingOrigMV">— fps</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="mvCorrected">MV Corregida</span><span class="info-value accent" id="truingNewMV">— fps</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="delta">Delta</span><span class="info-value" id="truingDeltaMV">— fps</span></div>
+        </div>
+        <button class="btn-secondary" onclick="runTruingMV()"><span data-i18n="calcTruing">Calcular Corrección MV</span></button>
+        <button class="btn-apply" id="btnApplyMV" onclick="applyTruingMV()" style="display:none"><span data-i18n="applyMV">Aplicar MV Corregida</span></button>
+      </div>
+      <hr class="truing-divider">
+      <div class="truing-stage">
+        <h4 data-i18n="truingStage2">Etapa 2: Ajuste de BC</h4>
+        <div class="form-row"><div class="form-group"><label data-i18n="truingDist2">Distancia del tiro</label><div class="input-with-unit"><input type="number" id="truingDist2" value="900" step="25"><span class="unit-label" id="truingDist2Unit">yd</span></div></div></div>
+        <div class="info-row"><span class="info-label" data-i18n="predictedDrop">Drop predicho</span><span class="info-value" id="truingPredDrop2">— in</span></div>
+        <div class="form-row"><div class="form-group"><label data-i18n="actualDrop">Drop REAL medido</label><div class="input-with-unit"><input type="number" id="truingActualDrop2" value="" step="0.1" placeholder="-318.2"><span class="unit-label" id="truingDropUnit2">in</span></div></div></div>
+        <div class="truing-result" id="truingResult2" style="display:none">
+          <div class="info-row"><span class="info-label" data-i18n="bcOriginal">BC Original</span><span class="info-value" id="truingOrigBC">—</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="bcCorrected">BC Corregido</span><span class="info-value accent" id="truingNewBC">—</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="delta">Delta</span><span class="info-value" id="truingDeltaBC">—</span></div>
+        </div>
+        <button class="btn-secondary" onclick="runTruingBC()"><span data-i18n="calcTruing">Calcular Corrección BC</span></button>
+        <button class="btn-apply" id="btnApplyBC" onclick="applyTruingBC()" style="display:none"><span data-i18n="applyBC">Aplicar BC Corregido</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="mpbrModal" style="display:none">
+  <div class="modal-panel">
+    <div class="modal-header"><h3>📐 <span data-i18n="mpbrTitle">MPBR — Punto en Blanco</span></h3><button class="btn-icon" onclick="closeMPBR()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label data-i18n="gameAnimal">Especie Objetivo</label><select id="gameAnimalSelect" onchange="onGameAnimalChange()"><option value="" data-i18n="gameAnimalNone">— Ninguna (manual) —</option></select></div></div>
+      <div id="gameAnimalInfo" style="display:none;margin-bottom:var(--sp-2);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;font-size:0.82rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span id="gameAnimalStatus" style="color:#f59e0b;font-weight:600"></span>
+          <span id="gameAnimalMinE" style="color:#94a3b8;font-size:0.78rem"></span>
+        </div>
+        <div id="gameAnimalRegulation" style="display:none;border-top:1px solid rgba(255,255,255,0.06);padding-top:6px;margin-top:4px">
+          <table style="width:100%;border-collapse:collapse;font-size:0.78rem" id="gameAnimalRegTable">
+            <thead><tr style="opacity:0.5;font-size:0.7rem;text-align:left">
+              <th style="padding:2px 4px" data-i18n="zonesLabel">Zonas</th>
+              <th style="padding:2px 4px" data-i18n="seasonLabel">Temporada</th>
+              <th style="padding:2px 4px" data-i18n="quotaLabel">Cuota</th>
+            </tr></thead>
+            <tbody id="gameAnimalRegBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:6px;font-size:0.7rem;opacity:0.5;display:flex;justify-content:space-between;align-items:center">
+          <span id="gameAnimalDataDate"></span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <button onclick="updateGameAnimalsDB()" id="btnUpdateDB" style="background:none;border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:6px;padding:1px 8px;cursor:pointer;font-size:0.68rem" data-i18n="updateDB">🔄 Actualizar</button>
+            <span>⚠️ <span data-i18n="verifySAG">Verifique con SAG vigente</span></span>
+          </span>
+        </div>
+      </div>
+      <div class="form-row"><div class="form-group"><label data-i18n="vitalZone">Zona Vital (diámetro)</label><div class="input-with-unit"><input type="number" id="mpbrVitalDiameter" value="8" step="0.5" min="1" max="30"><span class="unit-label" id="mpbrVitalUnit">in</span></div></div></div>
+      <div class="info-row"><span class="info-label" data-i18n="vitalRadius">Radio</span><span class="info-value accent" id="mpbrRadiusDisp">4.0 in</span></div>
+      <button class="btn-secondary" id="btnCalcMPBR" onclick="calculateMPBR()" style="margin-top:var(--sp-2)"><span data-i18n="calcMPBR">📐 Calcular MPBR</span></button>
+      <div id="mpbrResults" style="display:none;margin-top:var(--sp-3)">
+        <div class="mpbr-summary" style="display:grid">
+          <div class="mpbr-stat"><span class="mpbr-stat-label" data-i18n="optimalZero">Zero Óptimo</span><span class="mpbr-stat-value" id="mpbrOptZero">—</span></div>
+          <div class="mpbr-stat"><span class="mpbr-stat-label">MPBR</span><span class="mpbr-stat-value accent" id="mpbrDist">—</span></div>
+          <div class="mpbr-stat"><span class="mpbr-stat-label" data-i18n="nearZero">Zero Cercano</span><span class="mpbr-stat-value" id="mpbrNearZero">—</span></div>
+          <div class="mpbr-stat"><span class="mpbr-stat-label" data-i18n="farZero">Zero Lejano</span><span class="mpbr-stat-value" id="mpbrFarZero">—</span></div>
+          <div class="mpbr-stat"><span class="mpbr-stat-label" data-i18n="maxOrdinate">Ordenada Máxima</span><span class="mpbr-stat-value" id="mpbrMaxOrd">—</span></div>
+        </div>
+        <!-- Ethical hunting range panel -->
+        <div id="ethicalRangePanel" style="display:none;margin-top:var(--sp-3);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:var(--sp-3)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--sp-2)">
+            <span style="font-size:1.3rem">🎯</span>
+            <span style="font-weight:700;color:#f59e0b;font-size:1.1rem" data-i18n="ethicalRange">Dist. Máx. Ética</span>
+            <span style="font-weight:800;color:#22c55e;font-size:1.3rem;margin-left:auto" id="ethicalRangeValue">—</span>
+          </div>
+          <div class="info-row"><span class="info-label">MPBR</span><span class="info-value" id="ethicalMPBR">—</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="minEnergy">Energía Mín.</span><span class="info-value" id="ethicalMinEnergy">—</span></div>
+          <div class="info-row"><span class="info-label" data-i18n="energyAtMPBR">Energía en MPBR</span><span class="info-value" id="ethicalEnergyAtMPBR">—</span></div>
+          <div style="margin-top:var(--sp-2);font-size:0.8rem;opacity:0.6" id="ethicalLimitReason"></div>
+        </div>
+        <!-- Diagrama explicativo MPBR -->
+        <div class="mpbr-diagram" style="margin-top:var(--sp-3);background:rgba(0,0,0,0.3);border-radius:12px;padding:12px 8px 8px;border:1px solid rgba(255,255,255,0.06)">
+          <svg viewBox="0 0 480 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+            <!-- Zona vital (banda superior e inferior) -->
+            <rect x="40" y="62" width="420" height="56" rx="4" fill="rgba(34,197,94,0.08)" stroke="none"/>
+            <!-- Líneas límite zona vital -->
+            <line x1="40" y1="62" x2="460" y2="62" stroke="#22c55e" stroke-width="1" stroke-dasharray="6,4" opacity="0.5"/>
+            <line x1="40" y1="118" x2="460" y2="118" stroke="#22c55e" stroke-width="1" stroke-dasharray="6,4" opacity="0.5"/>
+            <!-- Etiqueta zona vital -->
+            <text x="465" y="68" fill="#22c55e" font-size="8" font-family="system-ui" opacity="0.7">+Radio</text>
+            <text x="465" y="124" fill="#22c55e" font-size="8" font-family="system-ui" opacity="0.7">−Radio</text>
+            <!-- Línea de mira (LOS) -->
+            <line x1="40" y1="90" x2="460" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="42" y="87" fill="rgba(255,255,255,0.3)" font-size="7" font-family="system-ui">LOS</text>
+            <!-- Trayectoria del proyectil (curva parabólica) -->
+            <path d="M 40,108 C 80,106 100,82 140,70 C 180,58 220,56 260,62 C 300,68 340,90 380,118 C 400,133 420,150 440,170"
+                  fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Punto de boca (muzzle) -->
+            <circle cx="40" cy="108" r="3" fill="#f59e0b"/>
+            <!-- Near Zero (donde la trayectoria cruza LOS subiendo) -->
+            <circle cx="95" cy="90" r="4" fill="#38bdf8" stroke="#0c4a6e" stroke-width="1.5"/>
+            <line x1="95" y1="90" x2="95" y2="155" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
+            <text x="95" y="167" fill="#38bdf8" font-size="9" font-family="system-ui" text-anchor="middle" font-weight="600">Zero</text>
+            <text x="95" y="177" fill="#38bdf8" font-size="9" font-family="system-ui" text-anchor="middle" font-weight="600">Cercano</text>
+            <!-- Max Ordinate (punto más alto) -->
+            <circle cx="205" cy="58" r="4" fill="#a78bfa" stroke="#4c1d95" stroke-width="1.5"/>
+            <line x1="205" y1="58" x2="205" y2="90" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+            <!-- Flecha bidireccional max ordinate -->
+            <line x1="213" y1="62" x2="213" y2="88" stroke="#a78bfa" stroke-width="1"/>
+            <polygon points="213,60 210,66 216,66" fill="#a78bfa"/>
+            <polygon points="213,90 210,84 216,84" fill="#a78bfa"/>
+            <text x="225" y="76" fill="#a78bfa" font-size="8" font-family="system-ui" font-weight="600">Ord.</text>
+            <text x="225" y="85" fill="#a78bfa" font-size="8" font-family="system-ui" font-weight="600">Máx.</text>
+            <!-- Far Zero / Optimal Zero (donde la trayectoria cruza LOS bajando) -->
+            <circle cx="335" cy="90" r="4" fill="#fb923c" stroke="#7c2d12" stroke-width="1.5"/>
+            <line x1="335" y1="90" x2="335" y2="155" stroke="#fb923c" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
+            <text x="335" y="167" fill="#fb923c" font-size="9" font-family="system-ui" text-anchor="middle" font-weight="600">Zero Lejano /</text>
+            <text x="335" y="177" fill="#fb923c" font-size="9" font-family="system-ui" text-anchor="middle" font-weight="600">Opt. Zero</text>
+            <!-- MPBR (donde la trayectoria cruza el límite inferior de la zona vital) -->
+            <circle cx="380" cy="118" r="4.5" fill="#ef4444" stroke="#7f1d1d" stroke-width="1.5"/>
+            <line x1="380" y1="118" x2="380" y2="155" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
+            <text x="380" y="167" fill="#ef4444" font-size="10" font-family="system-ui" text-anchor="middle" font-weight="700">MPBR</text>
+            <!-- Zona vital - etiqueta central -->
+            <rect x="430" y="80" width="26" height="20" rx="3" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="0.5"/>
+            <text x="443" y="93" fill="#22c55e" font-size="8" font-family="system-ui" text-anchor="middle" font-weight="600">⌀</text>
+            <!-- Flecha de distancia total -->
+            <line x1="40" y1="148" x2="380" y2="148" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <polygon points="40,148 46,145 46,151" fill="rgba(255,255,255,0.2)"/>
+            <polygon points="380,148 374,145 374,151" fill="rgba(255,255,255,0.2)"/>
+            <text x="210" y="145" fill="rgba(255,255,255,0.25)" font-size="7.5" font-family="system-ui" text-anchor="middle" data-i18n="mpbrEffRange">Rango efectivo sin ajuste de elevación</text>
+            <!-- Ícono de mira en el origen -->
+            <circle cx="40" cy="90" r="6" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+            <line x1="34" y1="90" x2="46" y2="90" stroke="rgba(255,255,255,0.25)" stroke-width="0.7"/>
+            <line x1="40" y1="84" x2="40" y2="96" stroke="rgba(255,255,255,0.25)" stroke-width="0.7"/>
+            <!-- Etiquetas de eje -->
+            <text x="38" y="15" fill="rgba(255,255,255,0.3)" font-size="7" font-family="system-ui">↕ Altura</text>
+            <text x="435" y="148" fill="rgba(255,255,255,0.3)" font-size="7" font-family="system-ui">Distancia →</text>
+          </svg>
+        </div>
+        <button class="btn-apply" onclick="applyMPBRZero()" style="margin-top:var(--sp-3)" data-i18n="applyOptimalZero">✔ Aplicar Zero Óptimo al Arma</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/engine/conversions.js"></script>
+<script src="js/engine/atmosphere.js"></script>
+<script src="js/engine/drag-models.js"></script>
+<script src="js/engine/stability.js"></script>
+<script src="js/engine/coriolis.js"></script>
+<script src="js/engine/solver.js"></script>
+<script src="js/engine/truing.js"></script>
+<script src="js/engine/reticle.js"></script>
+<script src="js/engine/mpbr.js"></script>
+<script src="js/engine/dope.js"></script>
+<script src="js/ui/silhouettes.js"></script>
+<script src="js/ui/reticle-view.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/lib/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

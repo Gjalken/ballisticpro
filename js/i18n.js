@@ -1,0 +1,277 @@
+/**
+ * BallisticPro — Internationalization (i18n) Module
+ * Supports English (en) and Spanish (es)
+ */
+const I18n = (() => {
+  let currentLang = 'es';
+
+  const translations = {
+    en: {
+      appName: 'BallisticPro', appSubtitle: 'Professional Ballistic Calculator',
+      navWeapon: 'Weapon', navProjectile: 'Projectile', navAtmosphere: 'Atmosphere',
+      navPosition: 'Position', navWind: 'Wind', navResults: 'Results', navSettings: 'Settings',
+      weaponTitle: 'Weapon Profile', weaponName: 'Weapon Name', weaponType: 'Weapon Type',
+      typeFirearm: 'Firearm', typeAirgun: 'Air Gun',
+      caliber: 'Caliber', twistRate: 'Twist Rate', twistDir: 'Twist Direction',
+      twistRH: 'Right-hand', twistLH: 'Left-hand',
+      barrelLength: 'Barrel Length', scopeHeight: 'Scope Height', zeroRange: 'Zero Range',
+      projTitle: 'Projectile Profile', projName: 'Projectile Name', projType: 'Projectile Type',
+      typeBullet: 'Bullet', typePellet: 'Pellet (Diabolo)', typeSlug: 'Slug (Airgun)',
+      weight: 'Weight', diameter: 'Diameter', length: 'Length',
+      bc: 'Ballistic Coefficient (BC)', dragModel: 'Drag Model', muzzleVel: 'Muzzle Velocity',
+      atmoTitle: 'Atmospheric Conditions', temperature: 'Temperature',
+      pressure: 'Barometric Pressure', pressureType: 'Pressure Type',
+      stationPressure: 'Station Pressure', seaLevelPressure: 'Sea Level Corrected',
+      humidity: 'Relative Humidity', altitude: 'Altitude', densityAlt: 'Density Altitude',
+      airDensity: 'Air Density', speedOfSound: 'Speed of Sound', useStandard: 'Use ICAO Standard',
+      posTitle: 'Position & Geometry', latitude: 'Latitude',
+      azimuth: 'Shooting Direction (Azimuth)', lookAngle: 'Look Angle (Inclination)',
+      uphill: 'Uphill', downhill: 'Downhill', cantAngle: 'Cant Angle',
+      windTitle: 'Wind Conditions', windSpeed: 'Wind Speed', windDir: 'Wind Direction',
+      alertTransonic: 'Transonic', alertSubsonic: 'Subsonic', alertSupersonicTo: 'Supersonic up to',
+      alertEnergyLow: 'E insufficient (min', alertEthicalTo: 'ethical up to', alertEFinal: 'E final',
+      windClock: 'Clock Position', crossWind: 'Crosswind Component', headTailWind: 'Head/Tail Wind',
+      headWind: '▲ head', tailWind: '▼ tail',
+      resultsTitle: 'Trajectory Results', rangeCard: 'Range Card', trajectory: 'Trajectory',
+      cancel: 'Cancel', custom: '— Custom —', calcError: 'Calculation error',
+      chart: 'Charts', range: 'Range', drop: 'Drop', windage: 'Windage',
+      velocity: 'Velocity', energy: 'Energy', tof: 'Time of Flight',
+      spinDrift: 'Spin Drift', coriolisH: 'Coriolis (Lat)', coriolisV: 'Coriolis (Vert)',
+      stability: 'Stability', transonic: 'TRANSONIC', subsonic: 'SUBSONIC',
+      calculate: 'Calculate', clear: 'Clear', exportCSV: 'Export CSV', exportPDF: 'Export PDF',
+      saveProfile: 'Save Profile', loadProfile: 'Load Profile',
+      unitYd: 'yd', unitM: 'm', unitIn: 'in', unitCm: 'cm',
+      unitMoa: 'MOA', unitMrad: 'MRAD', unitFps: 'fps', unitMps: 'm/s',
+      unitGr: 'gr', unitG: 'g', unitFtLbs: 'ft·lbs', unitJ: 'J',
+      unitMph: 'mph', unitKmh: 'km/h', unitHpa: 'hPa', unitInhg: 'inHg',
+      unitF: '°F', unitC: '°C', unitSec: 's', unitDeg: '°',
+      maxRange: 'Max Range', rangeStep: 'Range Step', unitSystem: 'Unit System',
+      metric: 'Metric', imperial: 'Imperial', language: 'Language',
+      darkMode: 'Dark Mode', installApp: 'Install App', about: 'About',
+      stable: 'STABLE', unstable: 'UNSTABLE', marginal: 'MARGINAL', overstabilized: 'OVER-STABILIZED',
+      // Focal plane
+      sfpPlane: 'SFP (2nd plane)', ffpPlane: 'FFP (1st plane)',
+      // Empty state
+      emptyStateText: 'Configure weapon, projectile, and atmospheric parameters, then press Calculate to generate the ballistic solution.',
+      // Optics
+      opticsTitle: 'Optics Profile', scopeSelect: 'Scope', focalPlane: 'Focal Plane',
+      reticleType: 'Reticle', reticleUnit: 'Reticle Unit', clickElev: 'Elev. Click',
+      clickWind: 'Wind. Click', turretUnit: 'Turret Unit', magRef: 'Ref. Mag',
+      magMin: 'Min Mag', magMax: 'Max Mag', magnification: 'Magnification',
+      // Reticle View
+      reticleView: '🔭 Reticle', targetDist: 'Target Distance',
+      holdover: 'Holdover', clicksElev: 'Elev. Clicks', clicksWind: 'Wind. Clicks',
+      rangeEst: 'Range Estimation', targetSize: 'Target Size',
+      milsObserved: 'MILs Observed', estRange: 'Est. Range',
+      sfpWarning: 'SFP: Reticle accurate at', firingSlnTitle: 'Firing Solution',
+      // Truing
+      truingTitle: 'Truing — Calibration', truingStage1: 'Stage 1: Muzzle Velocity Adjustment',
+      truingStage2: 'Stage 2: BC Adjustment', truingDist1: 'Shot Distance',
+      truingDist2: 'Shot Distance', predictedDrop: 'Predicted Drop',
+      actualDrop: 'Actual (measured) Drop', calcTruing: 'Calculate Correction',
+      applyMV: 'Apply Corrected MV', applyBC: 'Apply Corrected BC',
+      mvOriginal: 'Original MV', mvCorrected: 'Corrected MV',
+      bcOriginal: 'Original BC', bcCorrected: 'Corrected BC',
+      delta: 'Delta', enterActualDrop: 'Enter the actual measured drop',
+      rangeExceeded: 'range exceeded',
+      // MPBR
+      mpbrTitle: 'MPBR — Point Blank', mpbrTab: '🎯 MPBR',
+      vitalZone: 'Vital Zone (diameter)', vitalRadius: 'Radius',
+      calcMPBR: '📐 Calculate MPBR', optimalZero: 'Optimal Zero',
+      nearZero: 'Near Zero', farZero: 'Far Zero',
+      mpbrDist: 'MPBR', maxOrdinate: 'Max Ordinate',
+      mpbrChart: 'MPBR Trajectory — Vital Zone',
+      mpbrEffRange: 'Effective range without elevation adjustment',
+      mpbrNearZeroLabel: 'Near Zero', mpbrFarZeroLabel: 'Far Zero / Opt. Zero',
+      mpbrMaxOrdLabel: 'Max Ord.', mpbrLOS: 'LOS',
+      mpbrPlusRadius: '+Radius', mpbrMinusRadius: '-Radius',
+      mpbrHeight: '↕ Height', mpbrDistance: 'Distance →',
+      applyOptimalZero: '✔ Apply Optimal Zero to Weapon',
+      // Hunting / Game
+      gameAnimal: 'Target Species', gameAnimalNone: '— None (manual) —',
+      ethicalRange: 'Max Ethical Range', limitedByMPBR: 'Limited by MPBR (trajectory)',
+      limitedByEnergy: 'Limited by energy', minEnergy: 'Min. Energy',
+      energyAtMPBR: 'Energy at MPBR', statusDangerous: 'Harmful (year-round)',
+      statusRegulated: 'Regulated season', statusSpecial: 'Special permit',
+      firearmsOnly: 'Firearms only',
+      seasonLabel: 'Season', quotaLabel: 'Quota', zonesLabel: 'Zones',
+      verifySAG: 'Verify with current SAG resolution',
+      updateDB: '🔄 Update',
+      // DOPE
+      dopeTab: '📝 DOPE', dopeTitle: '📝 D.O.P.E. — Shooting Log',
+      dopeDate: 'Date', dopeWeapon: 'Weapon', dopeAmmo: 'Ammo', dopeScope: 'Scope',
+      dopeDist: 'Distance', dopeTemp: 'Temp', dopeWind: 'Wind', dopeWindDir: 'Wind Dir',
+      dopeElevClicks: 'Elev. Clicks', dopeWindClicks: 'Wind Clicks',
+      dopeElevMoa: 'Elev. (MOA)', dopeWindMoa: 'Wind. (MOA)',
+      dopeGroupSize: 'Group (MOA)', dopePOI: 'POI Result', dopeNotes: 'Notes',
+      dopeAutoFill: '⚡ Auto-fill from calculation', dopeSave: '✔ Save Entry',
+      dopeNoEntries: 'No entries yet. Add your first shot.',
+      dopeEntries: 'Entries', dopeMaxDist: 'Max Dist', dopeAvgGroup: 'Avg Group',
+      dopeSessions: 'Sessions',
+      dopeAdd: '+ Add', deleteEntry: 'Delete',
+      confirmClearDOPE: 'Delete ALL D.O.P.E. records? This cannot be undone.',
+      noExportData: 'No records to export',
+      enterValidDist: 'Enter a valid distance',
+      runCalcFirst: 'Run a ballistic calculation first (CALCULATE)',
+      // DOPE table headers
+      dopeHeaderDist: 'Dist.', dopeHeaderElev: 'Elev.', dopeHeaderWind: 'Wind.',
+      dopeHeaderCalcDrop: 'Calc. Drop', dopeHeaderCalcWind: 'Calc. Wind',
+      dopeHeaderDeltaElev: 'Δ Elev', dopeHeaderPOI: 'POI', dopeHeaderNotes: 'Notes',
+      // Chart labels
+      chartRange: 'Range', chartDrop: 'Drop', chartWindage: 'Windage',
+      chartVelocity: 'Velocity', chartEnergy: 'Energy',
+      chartPlusRadius: '+Radius', chartMinusRadius: '-Radius', chartTrajectory: 'Trajectory',
+      // Wind clock positions
+      windCustom: 'Custom °', windFront: '12 (Front)',
+      windRightPure: '3 (Right pure)', windTail: '6 (Tail)',
+      windLeftPure: '9 (Left pure)',
+    },
+    es: {
+      appName: 'BallisticPro', appSubtitle: 'Calculadora Balística Profesional',
+      navWeapon: 'Arma', navProjectile: 'Proyectil', navAtmosphere: 'Atmósfera',
+      navPosition: 'Posición', navWind: 'Viento', navResults: 'Resultados', navSettings: 'Ajustes',
+      weaponTitle: 'Perfil del Arma', weaponName: 'Nombre del Arma', weaponType: 'Tipo de Arma',
+      typeFirearm: 'Arma de Fuego', typeAirgun: 'Aire Comprimido',
+      caliber: 'Calibre', twistRate: 'Paso de Estrías', twistDir: 'Dirección de Estrías',
+      twistRH: 'Dextrógiro (Derecha)', twistLH: 'Levógiro (Izquierda)',
+      barrelLength: 'Largo del Cañón', scopeHeight: 'Altura de la Mira', zeroRange: 'Distancia de Cero',
+      projTitle: 'Perfil del Proyectil', projName: 'Nombre del Proyectil', projType: 'Tipo de Proyectil',
+      typeBullet: 'Bala', typePellet: 'Pellet (Diábolo)', typeSlug: 'Slug (Aire)',
+      weight: 'Peso', diameter: 'Diámetro', length: 'Largo',
+      bc: 'Coeficiente Balístico (BC)', dragModel: 'Modelo de Arrastre', muzzleVel: 'Velocidad de Boca',
+      atmoTitle: 'Condiciones Atmosféricas', temperature: 'Temperatura',
+      pressure: 'Presión Barométrica', pressureType: 'Tipo de Presión',
+      stationPressure: 'Presión de Estación', seaLevelPressure: 'Corregida a Nivel del Mar',
+      humidity: 'Humedad Relativa', altitude: 'Altitud', densityAlt: 'Altitud de Densidad',
+      airDensity: 'Densidad del Aire', speedOfSound: 'Velocidad del Sonido',
+      useStandard: 'Usar Estándar ICAO',
+      posTitle: 'Posición y Geometría', latitude: 'Latitud',
+      azimuth: 'Dirección de Disparo (Azimut)', lookAngle: 'Ángulo de Tiro (Inclinación)',
+      uphill: 'Cuesta Arriba', downhill: 'Cuesta Abajo', cantAngle: 'Ángulo de Cant',
+      windTitle: 'Condiciones de Viento', windSpeed: 'Velocidad del Viento',
+      windDir: 'Dirección del Viento', windClock: 'Posición de Reloj',
+      alertTransonic: 'Transónico', alertSubsonic: 'Subsónico', alertSupersonicTo: 'Supersónico hasta',
+      alertEnergyLow: 'E insuficiente (min', alertEthicalTo: 'ético hasta', alertEFinal: 'E final',
+      crossWind: 'Componente Cruzado', headTailWind: 'Viento Frontal/Cola',
+      headWind: '▲ frontal', tailWind: '▼ cola',
+      resultsTitle: 'Resultados de Trayectoria', rangeCard: 'Tarjeta de Rango',
+      trajectory: 'Trayectoria', chart: 'Gráficos', range: 'Distancia',
+      drop: 'Caída', windage: 'Deriva', velocity: 'Velocidad', energy: 'Energía',
+      tof: 'Tiempo de Vuelo', spinDrift: 'Deriva de Giro',
+      coriolisH: 'Coriolis (Lat)', coriolisV: 'Coriolis (Vert)',
+      stability: 'Estabilidad', transonic: 'TRANSÓNICO', subsonic: 'SUBSÓNICO',
+      calculate: 'Calcular', clear: 'Limpiar', exportCSV: 'Exportar CSV', exportPDF: 'Exportar PDF',
+      saveProfile: 'Guardar Perfil', loadProfile: 'Cargar Perfil',
+      unitYd: 'yd', unitM: 'm', unitIn: 'in', unitCm: 'cm',
+      unitMoa: 'MOA', unitMrad: 'MRAD', unitFps: 'fps', unitMps: 'm/s',
+      unitGr: 'gr', unitG: 'g', unitFtLbs: 'ft·lbs', unitJ: 'J',
+      unitMph: 'mph', unitKmh: 'km/h', unitHpa: 'hPa', unitInhg: 'inHg',
+      unitF: '°F', unitC: '°C', unitSec: 's', unitDeg: '°',
+      maxRange: 'Rango Máximo', rangeStep: 'Paso de Rango', unitSystem: 'Sistema de Unidades',
+      metric: 'Métrico', imperial: 'Imperial', language: 'Idioma',
+      darkMode: 'Modo Oscuro', installApp: 'Instalar App', about: 'Acerca de',
+      cancel: 'Cancelar', custom: '— Personalizado —', calcError: 'Error de cálculo',
+      stable: 'ESTABLE', unstable: 'INESTABLE', marginal: 'MARGINAL', overstabilized: 'SOBRE-ESTABILIZADO',
+      // Plano focal
+      sfpPlane: 'SFP (2do plano)', ffpPlane: 'FFP (1er plano)',
+      // Estado vacío
+      emptyStateText: 'Configure los parámetros del arma, proyectil y condiciones, luego presione Calcular para generar la solución balística.',
+      // Óptica
+      opticsTitle: 'Perfil de Óptica', scopeSelect: 'Mira', focalPlane: 'Plano Focal',
+      reticleType: 'Retículo', reticleUnit: 'Unidad Retículo', clickElev: 'Click Elevación',
+      clickWind: 'Click Windage', turretUnit: 'Unidad Torreta', magRef: 'Mag. Referencia',
+      magMin: 'Mag. Mín', magMax: 'Mag. Máx', magnification: 'Magnificación',
+      // Vista de Retículo
+      reticleView: '🔭 Retículo', targetDist: 'Distancia al Blanco',
+      holdover: 'Holdover', clicksElev: 'Clicks Elevación', clicksWind: 'Clicks Windage',
+      rangeEst: 'Estimación de Distancia', targetSize: 'Tamaño del Blanco',
+      milsObserved: 'MILs Observados', estRange: 'Dist. Estimada',
+      sfpWarning: 'SFP: Retículo preciso a', firingSlnTitle: 'Solución de Tiro',
+      // Truing
+      truingTitle: 'Truing — Calibración', truingStage1: 'Etapa 1: Ajuste de Velocidad de Boca',
+      truingStage2: 'Etapa 2: Ajuste de BC', truingDist1: 'Distancia del tiro',
+      truingDist2: 'Distancia del tiro', predictedDrop: 'Drop predicho',
+      actualDrop: 'Drop REAL medido', calcTruing: 'Calcular Corrección',
+      applyMV: 'Aplicar MV Corregida', applyBC: 'Aplicar BC Corregido',
+      mvOriginal: 'MV Original', mvCorrected: 'MV Corregida',
+      bcOriginal: 'BC Original', bcCorrected: 'BC Corregido',
+      delta: 'Delta', enterActualDrop: 'Ingrese la caída real medida',
+      rangeExceeded: 'rango excedido',
+      // MPBR
+      mpbrTitle: 'MPBR — Punto en Blanco', mpbrTab: '🎯 MPBR',
+      vitalZone: 'Zona Vital (diámetro)', vitalRadius: 'Radio',
+      calcMPBR: '📐 Calcular MPBR', optimalZero: 'Zero Óptimo',
+      nearZero: 'Zero Cercano', farZero: 'Zero Lejano',
+      mpbrDist: 'MPBR', maxOrdinate: 'Ordenada Máxima',
+      mpbrChart: 'Trayectoria MPBR — Zona Vital',
+      mpbrEffRange: 'Rango efectivo sin ajuste de elevación',
+      mpbrNearZeroLabel: 'Zero Cercano', mpbrFarZeroLabel: 'Zero Lejano / Opt. Zero',
+      mpbrMaxOrdLabel: 'Ord. Máx.', mpbrLOS: 'LDV',
+      mpbrPlusRadius: '+Radio', mpbrMinusRadius: '-Radio',
+      mpbrHeight: '↕ Altura', mpbrDistance: 'Distancia →',
+      applyOptimalZero: '✔ Aplicar Zero Óptimo al Arma',
+      // Caza / Presas
+      gameAnimal: 'Especie Objetivo', gameAnimalNone: '— Ninguna (manual) —',
+      ethicalRange: 'Dist. Máx. Ética', limitedByMPBR: 'Limitado por MPBR (trayectoria)',
+      limitedByEnergy: 'Limitado por energía', minEnergy: 'Energía Mín.',
+      energyAtMPBR: 'Energía en MPBR', statusDangerous: 'Dañina (todo el año)',
+      statusRegulated: 'Temporada regulada', statusSpecial: 'Permiso especial',
+      firearmsOnly: 'Solo armas de fuego',
+      seasonLabel: 'Temporada', quotaLabel: 'Cuota', zonesLabel: 'Zonas',
+      verifySAG: 'Verifique con resolución SAG vigente',
+      updateDB: '🔄 Actualizar',
+      // DOPE
+      dopeTab: '📝 DOPE', dopeTitle: '📝 D.O.P.E. — Registro de Tiro',
+      dopeDate: 'Fecha', dopeWeapon: 'Arma', dopeAmmo: 'Munición', dopeScope: 'Mira',
+      dopeDist: 'Distancia', dopeTemp: 'Temp.', dopeWind: 'Viento', dopeWindDir: 'Dir. Viento',
+      dopeElevClicks: 'Clicks Elev.', dopeWindClicks: 'Clicks Wind.',
+      dopeElevMoa: 'Elev. (MOA)', dopeWindMoa: 'Wind. (MOA)',
+      dopeGroupSize: 'Grupo (MOA)', dopePOI: 'Resultado POI', dopeNotes: 'Notas',
+      dopeAutoFill: '⚡ Auto-llenar con cálculo', dopeSave: '✔ Guardar Registro',
+      dopeNoEntries: 'Sin registros aún. Agrega tu primer tiro.',
+      dopeEntries: 'Registros', dopeMaxDist: 'Dist. Máx', dopeAvgGroup: 'Grupo Prom.',
+      dopeSessions: 'Sesiones',
+      dopeAdd: '+ Agregar', deleteEntry: 'Eliminar',
+      confirmClearDOPE: '¿Eliminar TODOS los registros D.O.P.E.? Esta acción no se puede deshacer.',
+      noExportData: 'No hay registros para exportar',
+      enterValidDist: 'Ingrese una distancia válida',
+      runCalcFirst: 'Primero ejecute un cálculo balístico (CALCULAR)',
+      // Encabezados tabla DOPE
+      dopeHeaderDist: 'Dist.', dopeHeaderElev: 'Elev.', dopeHeaderWind: 'Viento',
+      dopeHeaderCalcDrop: 'Caída Calc.', dopeHeaderCalcWind: 'Der. Calc.',
+      dopeHeaderDeltaElev: 'Δ Elev', dopeHeaderPOI: 'POI', dopeHeaderNotes: 'Notas',
+      // Etiquetas de gráficos
+      chartRange: 'Distancia', chartDrop: 'Caída', chartWindage: 'Deriva',
+      chartVelocity: 'Velocidad', chartEnergy: 'Energía',
+      chartPlusRadius: '+Radio', chartMinusRadius: '-Radio', chartTrajectory: 'Trayectoria',
+      // Posiciones de reloj de viento
+      windCustom: 'Personalizado °', windFront: '12 (Frontal)',
+      windRightPure: '3 (Der. puro)', windTail: '6 (Cola)',
+      windLeftPure: '9 (Izq. puro)',
+    }
+  };
+
+  function t(key) { return (translations[currentLang] || translations.en)[key] || key; }
+  function setLang(lang) { currentLang = lang; }
+  function getLang() { return currentLang; }
+  function getAvailable() { return ['en', 'es']; }
+
+  function updateDOM() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = t(key);
+      } else if (el.tagName === 'OPTION') {
+        el.textContent = t(key);
+      } else {
+        el.textContent = t(key);
+      }
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.getAttribute('data-i18n-title'));
+    });
+  }
+
+  return { t, setLang, getLang, getAvailable, updateDOM };
+})();
+if (typeof module !== 'undefined') module.exports = I18n;

@@ -1,0 +1,9 @@
+﻿# --- never publish ---
+node_modules/
+scratch/
+*.pem
+.DS_Store
+# personal documents / gear exports / internal notes
+Documentos/
+ACTUALIZACION_ESPECIES.md
+*.srl

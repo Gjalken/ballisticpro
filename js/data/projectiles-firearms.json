@@ -1,0 +1,20 @@
+{
+  "firearms": [
+    {"name":"Sierra MatchKing 168gr .308","cal":".308","diamIn":0.308,"lengthIn":1.215,"weightGr":168,"bcG1":0.462,"bcG7":0.243,"type":"bullet"},
+    {"name":"Sierra MatchKing 175gr .308","cal":".308","diamIn":0.308,"lengthIn":1.24,"weightGr":175,"bcG1":0.505,"bcG7":0.264,"type":"bullet"},
+    {"name":"Sierra MatchKing 77gr .224","cal":"5.56","diamIn":0.224,"lengthIn":0.985,"weightGr":77,"bcG1":0.372,"bcG7":0.197,"type":"bullet"},
+    {"name":"Hornady ELD-M 140gr 6.5mm","cal":"6.5CM","diamIn":0.264,"lengthIn":1.375,"weightGr":140,"bcG1":0.610,"bcG7":0.315,"type":"bullet"},
+    {"name":"Hornady ELD-M 147gr 6.5mm","cal":"6.5CM","diamIn":0.264,"lengthIn":1.413,"weightGr":147,"bcG1":0.697,"bcG7":0.351,"type":"bullet"},
+    {"name":"Berger Hybrid Target 140gr 6.5mm","cal":"6.5CM","diamIn":0.264,"lengthIn":1.376,"weightGr":140,"bcG1":0.607,"bcG7":0.311,"type":"bullet"},
+    {"name":"Hornady A-MAX 208gr .308","cal":".300WM","diamIn":0.308,"lengthIn":1.530,"weightGr":208,"bcG1":0.648,"bcG7":0.336,"type":"bullet"},
+    {"name":"Sierra MatchKing 300gr .338","cal":".338LM","diamIn":0.338,"lengthIn":1.700,"weightGr":300,"bcG1":0.768,"bcG7":0.395,"type":"bullet"},
+    {"name":"Hornady A-MAX 750gr .50","cal":".50BMG","diamIn":0.510,"lengthIn":2.560,"weightGr":750,"bcG1":1.050,"bcG7":0.540,"type":"bullet"},
+    {"name":"Hornady V-MAX 55gr .224","cal":"5.56","diamIn":0.224,"lengthIn":0.795,"weightGr":55,"bcG1":0.255,"bcG7":0.135,"type":"bullet"},
+    {"name":"Nosler AccuBond 165gr .308","cal":".308","diamIn":0.308,"lengthIn":1.200,"weightGr":165,"bcG1":0.475,"bcG7":0.246,"type":"bullet"},
+    {"name":"Barnes TTSX 130gr .308","cal":".308","diamIn":0.308,"lengthIn":1.280,"weightGr":130,"bcG1":0.392,"bcG7":0.201,"type":"bullet"},
+    {"name":"Winchester Super-X .308 Win 180gr Power-Point","cal":".308","diamIn":0.308,"lengthIn":1.180,"weightGr":180,"bcG1":0.382,"bcG7":0.195,"type":"bullet","muzzleVelFps":2620,"notes":"Flat-base SP, caza mayor"},
+    {"name":"Remington Core-Lokt .300WM 180gr PSP (R300W2)","cal":".300WM","diamIn":0.308,"lengthIn":1.200,"weightGr":180,"bcG1":0.383,"bcG7":0.196,"type":"bullet","muzzleVelFps":2960,"notes":"Pointed Soft Point, caza mayor. Strelok+: BC 0.383 G1, 902m/s"},
+    {"name":"Winchester Power Point .300WM 180gr","cal":".300WM","diamIn":0.308,"lengthIn":1.180,"weightGr":180,"bcG1":0.438,"bcG7":0.224,"type":"bullet","muzzleVelFps":2960,"notes":"Flat-base SP. Strelok+: BC 0.438 G1, 902m/s"},
+    {"name":"Winchester Power Point .308 180gr","cal":".308","diamIn":0.308,"lengthIn":1.180,"weightGr":180,"bcG1":0.382,"bcG7":0.195,"type":"bullet","muzzleVelFps":2620,"notes":"Flat-base SP. Strelok+: BC 0.382 G1, 803m/s"}
+  ]
+}

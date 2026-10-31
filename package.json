@@ -1,0 +1,11 @@
+{
+  "name": "ballisticpro",
+  "version": "1.1.0",
+  "private": true,
+  "description": "BallisticPro — offline-first ballistic calculator (PWA)",
+  "scripts": {
+    "test": "node tests/run-tests.js",
+    "bench": "node tests/bench.js",
+    "serve": "npx -y http-server . -p 8080 -c-1"
+  }
+}
