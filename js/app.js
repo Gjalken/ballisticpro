@@ -102,14 +102,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     appState.lang = appState.lang === 'es' ? 'en' : 'es';
     I18n.setLang(appState.lang);
     I18n.updateDOM();
+    if (document.getElementById('huntingLawModal')?.style.display === 'flex') {
+      renderHuntingLawCartilla();
+    }
   });
 
   document.getElementById('btnUnits').addEventListener('click', () => {
     appState.units = appState.units === 'imperial' ? 'metric' : 'imperial';
     updateUnitsDisplay();
+    if (document.getElementById('huntingLawModal')?.style.display === 'flex') {
+      renderHuntingLawCartilla();
+    }
   });
 
   document.getElementById('btnTruing').addEventListener('click', openTruing);
+  const btnHL = document.getElementById('btnHuntingLaw');
+  if (btnHL) btnHL.addEventListener('click', openHuntingLaw);
 
   // Reticle view controls
   document.getElementById('reticleMagSlider').addEventListener('input', (e) => {
@@ -1802,6 +1810,9 @@ async function updateGameAnimalsDB() {
     // Update date display
     const sel = document.getElementById('gameAnimalSelect');
     if (sel && sel.value) onGameAnimalChange();
+    if (document.getElementById('huntingLawModal')?.style.display === 'flex') {
+      renderHuntingLawCartilla();
+    }
 
     const count = data.animals.length;
     btn.textContent = '✔ ' + (lang === 'es'
@@ -1816,6 +1827,223 @@ async function updateGameAnimalsDB() {
     btn.style.color = '#ef4444';
     setTimeout(() => { btn.textContent = originalText; btn.style.color = ''; btn.disabled = false; }, 3000);
   }
+}
+
+// ─── Cartilla de Caza SAG (Ley N° 19.473 / D.S. N° 5) ───
+function _zoneAppliesTo(regZone, selectedZone) {
+  if (!regZone || selectedZone === 'all') return true;
+  if (regZone.startsWith('Nacional')) return true;
+  if (selectedZone === 'Norte') return regZone.startsWith('Norte');
+  if (selectedZone === 'Centro') return regZone.startsWith('Centro') || regZone.includes('V Región');
+  if (selectedZone === 'Sur') return regZone.startsWith('Sur');
+  if (selectedZone === 'Austral') return regZone.startsWith('Austral') || regZone.includes('XII Región');
+  return false;
+}
+
+function _isRegPermitted(reg) {
+  if (!reg) return false;
+  if (reg.season === 'PROTEGIDA') return false;
+  if (reg.quota === 0 || reg.quota === '0') return false;
+  return true;
+}
+
+function openHuntingLaw() {
+  const modal = document.getElementById('huntingLawModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  renderHuntingLawCartilla();
+}
+
+function closeHuntingLaw() {
+  const modal = document.getElementById('huntingLawModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function selectAnimalFromCartilla(animalId) {
+  const animal = (appState.gameAnimalsDB || []).find(a => a.id === animalId);
+  if (!animal) return;
+
+  // Ensure gameAnimalSelect includes this animal (if mayor + airgun, temporarily allow or switch)
+  const wTypeEl = document.getElementById('weaponType');
+  if (animal.category === 'mayor' && wTypeEl && wTypeEl.value === 'airgun') {
+    populateGameAnimalSelect();
+  }
+  const sel = document.getElementById('gameAnimalSelect');
+  if (sel) {
+    // If option not in select (e.g. airgun + mayor), append it so user can still inspect MPBR/energy warning
+    if (!Array.from(sel.options).some(o => o.value === animal.id)) {
+      const opt = document.createElement('option');
+      opt.value = animal.id;
+      opt.textContent = (appState.lang === 'es' ? animal.nameEs : animal.nameEn);
+      sel.appendChild(opt);
+    }
+    sel.value = animal.id;
+    onGameAnimalChange();
+  }
+  const silSel = document.getElementById('reticleSilhouetteSelect');
+  if (silSel && Array.from(silSel.options).some(o => o.value === animal.id)) {
+    silSel.value = animal.id;
+  }
+
+  closeHuntingLaw();
+  openMPBR();
+  try { calculateMPBR(); } catch (e) {}
+}
+
+function renderHuntingLawCartilla() {
+  const listEl = document.getElementById('huntingLawList');
+  if (!listEl) return;
+
+  const lang = appState.lang || 'es';
+  const isMetric = appState.units === 'metric';
+  const zoneFilter = document.getElementById('hlZoneSelect')?.value || 'all';
+  const catFilter = document.getElementById('hlCatSelect')?.value || 'all';
+  const statusFilter = document.getElementById('hlStatusSelect')?.value || 'all';
+  const searchQuery = (document.getElementById('hlSearchInput')?.value || '').trim().toLowerCase();
+
+  const clAnimals = (appState.gameAnimalsDB || []).filter(a => a.region === 'CL');
+
+  const filtered = clAnimals.filter(a => {
+    if (catFilter !== 'all' && a.category !== catFilter) return false;
+    if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+    if (zoneFilter !== 'all') {
+      const regs = a.regulations || [];
+      const allowedInZone = regs.some(r => _zoneAppliesTo(r.zone, zoneFilter) && _isRegPermitted(r));
+      if (!allowedInZone) return false;
+    }
+    if (searchQuery) {
+      const hay = `${a.nameEs || ''} ${a.nameEn || ''} ${a.scientificName || ''}`.toLowerCase();
+      if (!hay.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+
+  const countBadge = document.getElementById('hlCountBadge');
+  if (countBadge) {
+    countBadge.textContent = lang === 'es'
+      ? `${filtered.length} de ${clAnimals.length} especies`
+      : `${filtered.length} of ${clAnimals.length} species`;
+  }
+
+  const meta = appState.gameAnimalsDBMeta;
+  const warnEl = document.getElementById('hlWarningText');
+  if (warnEl && meta) {
+    warnEl.textContent = '⚠️ ' + (lang === 'es' ? (meta.warning_es || I18n.t('verifySAG')) : (meta.warning_en || I18n.t('verifySAG')));
+  }
+  const verEl = document.getElementById('hlDataVersion');
+  if (verEl && meta) {
+    verEl.textContent = `SAG ${meta.lastUpdated || ''}`;
+  }
+
+  if (!filtered.length) {
+    listEl.innerHTML = `<div style="text-align:center;padding:24px;color:#94a3b8;font-size:0.85rem">${
+      lang === 'es'
+        ? 'No se encontraron especies permitidas con los filtros seleccionados.'
+        : 'No permitted species found with the selected filters.'
+    }</div>`;
+    return;
+  }
+
+  const typeIcons = {
+    deer: '🦌', bovine: '🐂', camelid: '🦙', equine: '🐴',
+    boar: '🐗', rabbit: '🐇', bird: '🐦', goat: '🐐', fox: '🦊'
+  };
+
+  const statusMeta = {
+    regulada: {
+      label: lang === 'es' ? 'Art. 5° Temporada Regulada' : 'Art. 5° Regulated Season',
+      bg: 'rgba(56,189,248,0.12)',
+      border: 'rgba(56,189,248,0.35)',
+      color: '#38bdf8'
+    },
+    'dañina': {
+      label: lang === 'es' ? 'Art. 6° Dañina — Todo el año' : 'Art. 6° Harmful — Year-round',
+      bg: 'rgba(34,197,94,0.12)',
+      border: 'rgba(34,197,94,0.35)',
+      color: '#22c55e'
+    },
+    especial: {
+      label: lang === 'es' ? 'Régimen Especial (XII Región)' : 'Special Regime (XII Region)',
+      bg: 'rgba(245,158,11,0.12)',
+      border: 'rgba(245,158,11,0.35)',
+      color: '#f59e0b'
+    }
+  };
+
+  listEl.innerHTML = filtered.map(a => {
+    const icon = typeIcons[a.silhouetteType] || '🎯';
+    const name = lang === 'es' ? a.nameEs : a.nameEn;
+    const catBadge = a.category === 'mayor'
+      ? (lang === 'es' ? 'Caza Mayor' : 'Big Game')
+      : (lang === 'es' ? 'Caza Menor' : 'Small Game');
+    const catColor = a.category === 'mayor' ? '#f59e0b' : '#a78bfa';
+    const st = statusMeta[a.status] || statusMeta.regulada;
+    const vitalDisp = isMetric
+      ? `⌀ ${a.vitalZoneCm} cm`
+      : `⌀ ${(a.vitalZoneCm / 2.54).toFixed(1)} in`;
+    const minEDisp = fmtE(a.minEnergyFPE, 0);
+
+    const rowsHtml = (a.regulations || []).map(r => {
+      const permitted = _isRegPermitted(r);
+      const matchesSelectedZone = zoneFilter === 'all' || _zoneAppliesTo(r.zone, zoneFilter);
+      let qDisp = r.quota;
+      if (typeof r.quota === 'number') {
+        qDisp = r.quota === 0
+          ? (lang === 'es' ? '0 (Vedada)' : '0 (Closed)')
+          : `${r.quota} / ${lang === 'es' ? 'día' : 'day'}`;
+      }
+      const seasonDisp = (r.quota === 0 || r.quota === '0') && r.season === '—'
+        ? (lang === 'es' ? 'Vedada en esta zona' : 'Closed in this zone')
+        : r.season;
+
+      const rowOpacity = (!matchesSelectedZone && zoneFilter !== 'all') ? '0.4' : (permitted ? '1' : '0.55');
+      const highlightBg = (zoneFilter !== 'all' && matchesSelectedZone && permitted)
+        ? 'background:rgba(34,197,94,0.08);'
+        : '';
+      const seasonColor = r.season === 'PROTEGIDA'
+        ? '#ef4444'
+        : (permitted ? '#e2e8f0' : '#64748b');
+      const quotaColor = permitted ? '#22c55e' : '#ef4444';
+
+      const notesHtml = r.notes
+        ? `<div style="font-size:0.68rem;color:#94a3b8;font-weight:400;margin-top:1px">ℹ️ ${esc(r.notes)}</div>`
+        : '';
+
+      return `<tr style="border-top:1px solid rgba(255,255,255,0.05);opacity:${rowOpacity};${highlightBg}">
+        <td style="padding:4px 6px;font-weight:600;color:#cbd5e1;width:34%">${esc(r.zone)}</td>
+        <td style="padding:4px 6px;color:${seasonColor};font-weight:600;width:42%">${esc(seasonDisp)}${notesHtml}</td>
+        <td style="padding:4px 6px;color:${quotaColor};font-weight:700;font-family:var(--font-mono);text-align:right;width:24%">${esc(qDisp)}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="hl-species-card" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 11px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:1rem">${icon}</span>
+            <strong style="font-size:0.88rem;color:#f8fafc">${esc(name)}</strong>
+            <em style="font-size:0.74rem;color:#64748b">${esc(a.scientificName || '')}</em>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;font-size:0.68rem">
+            <span style="padding:1px 7px;border-radius:99px;background:${st.bg};border:1px solid ${st.border};color:${st.color};font-weight:600">${esc(st.label)}</span>
+            <span style="padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.05);color:${catColor};font-weight:600">${esc(catBadge)}</span>
+            <span style="color:#94a3b8;font-family:var(--font-mono)">${esc(vitalDisp)} · E≥${esc(minEDisp)}</span>
+          </div>
+        </div>
+        <button type="button" onclick="selectAnimalFromCartilla('${esc(a.id)}')" style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;border-radius:6px;padding:4px 9px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap">${esc(I18n.t('hlUseInMPBR'))}</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+        <thead>
+          <tr style="color:#64748b;font-size:0.66rem;text-transform:uppercase;text-align:left">
+            <th style="padding:2px 6px">${esc(I18n.t('zonesLabel'))}</th>
+            <th style="padding:2px 6px">${esc(I18n.t('seasonLabel'))}</th>
+            <th style="padding:2px 6px;text-align:right">${esc(I18n.t('quotaLabel'))}</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════

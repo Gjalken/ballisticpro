@@ -147,6 +147,20 @@ const noopCtx = new Proxy({}, {
   const dt = Date.now() - t0;
   ok(ev('!!appState.mpbrResult'), `MPBR finished (${dt} ms incl. 50 ms UI delay)`);
 
+  console.log('\nCartilla de Caza SAG (Ley 19.473)');
+  ev('openHuntingLaw()');
+  const allCards = $('huntingLawList').querySelectorAll('.hl-species-card').length;
+  ok($('huntingLawModal').style.display === 'flex' && allCards === 45, `Cartilla opens and renders all 45 Chilean species (got ${allCards})`);
+  ev(`document.getElementById('hlZoneSelect').value = 'Norte'; renderHuntingLawCartilla();`);
+  const norteCards = $('huntingLawList').querySelectorAll('.hl-species-card').length;
+  ok(norteCards > 0 && norteCards < allCards, `Zone filter 'Norte' filters to species allowed in Zona Norte (${norteCards} of ${allCards})`);
+  ev(`document.getElementById('hlZoneSelect').value = 'all'; document.getElementById('hlSearchInput').value = 'tórtola'; renderHuntingLawCartilla();`);
+  const tortolaCards = $('huntingLawList').querySelectorAll('.hl-species-card').length;
+  ok(tortolaCards >= 2, `Search filter 'tórtola' finds matching species (${tortolaCards})`);
+  ev(`selectAnimalFromCartilla('tortola')`);
+  await sleep(150);
+  ok($('gameAnimalSelect').value === 'tortola' && $('mpbrModal').style.display === 'flex', `selectAnimalFromCartilla('tortola') loads Tórtola into MPBR and opens MPBR modal`);
+
   console.log(`\n${passed} passed, ${failed} failed`);
   w.close(); server.close();
   process.exit(failed ? 1 : 0);

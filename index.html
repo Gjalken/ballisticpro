@@ -26,6 +26,7 @@
     <div class="header-actions">
       <button class="btn-icon" id="btnTruing" title="Truing" data-i18n-title="truingTitle">🎯</button>
       <button class="btn-icon" id="btnMPBR" title="MPBR">⊕</button>
+      <button class="btn-icon" id="btnHuntingLaw" title="Cartilla de Caza SAG" data-i18n-title="huntingLawTitle">🦌</button>
       <button class="btn-icon" id="btnLang" title="Idioma" data-i18n-title="language">🌐</button>
       <button class="btn-icon" id="btnUnits" title="Unidades" data-i18n-title="unitSystem">📐</button>
       <button class="btn-icon" id="btnInstall" title="Instalar" data-i18n-title="installApp" style="display:none">📲</button>
@@ -149,6 +150,7 @@
           <button class="tab-btn" onclick="switchTab('tabMPBR', this)" data-i18n="mpbrTab">🎯 MPBR</button>
           <button class="tab-btn" onclick="switchTab('tabReticle', this)" data-i18n="reticleView">🔭 Retículo</button>
           <button class="tab-btn" onclick="switchTab('tabDOPE', this)" data-i18n="dopeTab">📝 DOPE</button>
+          <button class="tab-btn" onclick="openHuntingLaw()" data-i18n="huntingLawTab">🦌 Ley de Caza</button>
         </div>
         <div class="tab-content active" id="tabRangeCard">
           <div class="range-card-container">
@@ -300,6 +302,7 @@
     <div class="modal-header"><h3>📐 <span data-i18n="mpbrTitle">MPBR — Punto en Blanco</span></h3><button class="btn-icon" onclick="closeMPBR()">✕</button></div>
     <div class="modal-body">
       <div class="form-row"><div class="form-group"><label data-i18n="gameAnimal">Especie Objetivo</label><select id="gameAnimalSelect" onchange="onGameAnimalChange()"><option value="" data-i18n="gameAnimalNone">— Ninguna (manual) —</option></select></div></div>
+      <button type="button" class="btn-secondary" onclick="openHuntingLaw()" style="height:32px;font-size:0.75rem;margin-top:-6px" data-i18n="hlOpenCartilla">📜 Ver Cartilla Completa SAG (Zonas, Períodos y Cuotas)</button>
       <div id="gameAnimalInfo" style="display:none;margin-bottom:var(--sp-2);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;font-size:0.82rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <span id="gameAnimalStatus" style="color:#f59e0b;font-weight:600"></span>
@@ -406,6 +409,66 @@
           </svg>
         </div>
         <button class="btn-apply" onclick="applyMPBRZero()" style="margin-top:var(--sp-3)" data-i18n="applyOptimalZero">✔ Aplicar Zero Óptimo al Arma</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="huntingLawModal" style="display:none">
+  <div class="modal-panel" style="max-width:680px">
+    <div class="modal-header">
+      <h3>🦌 <span data-i18n="huntingLawTitle">Cartilla de Caza SAG — Ley N° 19.473 (D.S. N° 5)</span></h3>
+      <button class="btn-icon" onclick="closeHuntingLaw()">✕</button>
+    </div>
+    <div class="modal-body" style="gap:10px;padding:12px 14px">
+      <!-- Zonas SAG Leyenda -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 10px;font-size:0.72rem;line-height:1.3">
+        <div><strong style="color:#f59e0b">Zona Norte (N):</strong> <span style="color:#94a3b8">Arica y Parinacota a Atacama (XV, I, II, III)</span></div>
+        <div><strong style="color:#f59e0b">Zona Centro (C):</strong> <span style="color:#94a3b8">Coquimbo a Maule (IV, V, RM, VI, VII)</span></div>
+        <div><strong style="color:#f59e0b">Zona Sur (S):</strong> <span style="color:#94a3b8">Ñuble a Los Lagos (XVI, VIII, IX, XIV, X)</span></div>
+        <div><strong style="color:#f59e0b">Zona Austral (A):</strong> <span style="color:#94a3b8">Aysén y Magallanes (XI, XII)</span></div>
+      </div>
+      <!-- Filtros -->
+      <div class="form-row" style="grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group">
+          <label data-i18n="hlZoneFilter">Zona de Caza</label>
+          <select id="hlZoneSelect" onchange="renderHuntingLawCartilla()">
+            <option value="all" data-i18n="hlZoneAll">Todas las Zonas (N / C / S / A)</option>
+            <option value="Norte" data-i18n="hlZoneN">Zona Norte (XV–III) — SOLO PERMITIDAS</option>
+            <option value="Centro" data-i18n="hlZoneC">Zona Centro (IV–RM–VII) — SOLO PERMITIDAS</option>
+            <option value="Sur" data-i18n="hlZoneS">Zona Sur (XVI, VIII–X) — SOLO PERMITIDAS</option>
+            <option value="Austral" data-i18n="hlZoneA">Zona Austral (XI–XII) — SOLO PERMITIDAS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="hlCatFilter">Categoría</label>
+          <select id="hlCatSelect" onchange="renderHuntingLawCartilla()">
+            <option value="all" data-i18n="hlCatAll">Todas (Menor y Mayor)</option>
+            <option value="menor" data-i18n="hlCatMenor">Caza Menor</option>
+            <option value="mayor" data-i18n="hlCatMayor">Caza Mayor</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="grid-template-columns:1fr 1.2fr;gap:8px">
+        <div class="form-group">
+          <label data-i18n="hlStatusFilter">Régimen Legal</label>
+          <select id="hlStatusSelect" onchange="renderHuntingLawCartilla()">
+            <option value="all" data-i18n="hlStatusAll">Todas las Permitidas</option>
+            <option value="regulada" data-i18n="hlStatusReg">Temporada Regulada (Art. 5°)</option>
+            <option value="dañina" data-i18n="hlStatusDan">Dañinas — Todo el año (Art. 6°)</option>
+            <option value="especial" data-i18n="hlStatusEsp">Régimen Especial (XII Región)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>🔎 <span id="hlCountBadge" style="color:#f59e0b;font-weight:700"></span></label>
+          <input type="text" id="hlSearchInput" oninput="renderHuntingLawCartilla()" data-i18n="hlSearchPlaceholder" placeholder="Buscar especie (ej. tórtola, pato, perdiz, conejo, jabalí)...">
+        </div>
+      </div>
+      <!-- Lista de Especies y Cuotas -->
+      <div id="huntingLawList" style="display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding-right:2px"></div>
+      <!-- Pie con aviso legal SAG -->
+      <div style="font-size:0.7rem;color:#94a3b8;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="hlWarningText">⚠️ Verifique siempre con resolución SAG regional vigente antes de cazar. Requiere Permiso de Caza SAG al día.</span>
+        <span id="hlDataVersion" style="font-family:var(--font-mono);color:#f59e0b;white-space:nowrap"></span>
       </div>
     </div>
   </div>
