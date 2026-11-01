@@ -90,7 +90,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "caiquen",
@@ -126,7 +126,7 @@
         }
       ],
       "bodyHeightCm": 40,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "canquen",
@@ -163,7 +163,7 @@
         }
       ],
       "bodyHeightCm": 35,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_criollo",
@@ -199,7 +199,7 @@
         }
       ],
       "bodyHeightCm": 40,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_juarjual",
@@ -236,7 +236,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_real",
@@ -272,7 +272,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_jergon_grande",
@@ -308,7 +308,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_jergon_chico",
@@ -344,7 +344,7 @@
         }
       ],
       "bodyHeightCm": 25,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "pato_colorado",
@@ -380,7 +380,7 @@
         }
       ],
       "bodyHeightCm": 28,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "codorniz",
@@ -452,7 +452,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "tagua_chica",
@@ -488,7 +488,7 @@
         }
       ],
       "bodyHeightCm": 22,
-      "silhouetteType": "bird"
+      "silhouetteType": "duck"
     },
     {
       "id": "tortola_cordillerana",
@@ -1069,7 +1069,7 @@
         }
       ],
       "bodyHeightCm": 20,
-      "silhouetteType": "mink"
+      "silhouetteType": "fox"
     },
     {
       "id": "castor",

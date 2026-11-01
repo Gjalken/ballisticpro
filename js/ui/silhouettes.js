@@ -18,24 +18,24 @@ const Silhouettes = (() => {
     boar:    { x: 0.55, y: 0.42, rFactor: 0.07 },  // faces RIGHT, front leg ~0.58, heart behind at ~0.55
     rabbit:  { x: 0.42, y: 0.52, rFactor: 0.08 },  // sitting, body center ~0.45
     bird:    { x: 0.78, y: 0.47, rFactor: 0.09 },  // faces RIGHT (dove), chest center
+    duck:    { x: 0.40, y: 0.49, rFactor: 0.08 },  // faces LEFT (mallard), breast/thorax center
     goat:    { x: 0.44, y: 0.48, rFactor: 0.06 },  // body center ~0.50, heart at ~0.44
     fox:     { x: 0.34, y: 0.46, rFactor: 0.07 },  // body center ~0.40, heart at ~0.34
-    beaver:  { x: 0.32, y: 0.56, rFactor: 0.09 },  // faces LEFT, stout chest behind foreleg
-    muskrat: { x: 0.30, y: 0.56, rFactor: 0.09 },  // faces LEFT, compact rodent thorax
-    mink:    { x: 0.28, y: 0.54, rFactor: 0.08 },  // faces LEFT, low mustelid thorax
+    beaver:  { x: 0.30, y: 0.50, rFactor: 0.07 },  // faces LEFT, stout chest behind foreleg
+    muskrat: { x: 0.31, y: 0.50, rFactor: 0.07 },  // faces LEFT, compact rodent thorax
     generic: { x: 0.44, y: 0.48, rFactor: 0.07 }
   };
 
   const aspects = {
     deer: 1.30, bovine: 1.35, camelid: 0.85, equine: 1.10,
-    boar: 1.30, rabbit: 0.75, bird: 1.18, goat: 1.15,
-    fox: 1.50, beaver: 1.65, muskrat: 1.70, mink: 1.90, generic: 1.30
+    boar: 1.30, rabbit: 0.75, bird: 1.18, duck: 1.00, goat: 1.15,
+    fox: 1.50, beaver: 1.00, muskrat: 1.00, generic: 1.30
   };
 
   // ── Image system ──
   const images = {};
   const tintedCache = {};
-  const TYPES = ['deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit', 'bird', 'goat', 'fox'];
+  const TYPES = ['deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit', 'bird', 'duck', 'goat', 'fox', 'beaver', 'muskrat'];
   let _onReadyCallback = null;
   let _imagesAvailable = false;
 

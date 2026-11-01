@@ -12,7 +12,7 @@
  *
  * Bump CACHE_VERSION whenever the ASSETS list changes (old caches are deleted on activate).
  */
-const CACHE_VERSION = 'v79';
+const CACHE_VERSION = 'v80';
 const CACHE_NAME = 'ballisticpro-' + CACHE_VERSION;
 const NET_TIMEOUT_MS = 3000;
 
@@ -32,8 +32,9 @@ const ASSETS = [
   'img/silhouettes/deer.png', 'img/silhouettes/bovine.png',
   'img/silhouettes/camelid.png', 'img/silhouettes/equine.png',
   'img/silhouettes/boar.png', 'img/silhouettes/rabbit.png',
-  'img/silhouettes/bird.png', 'img/silhouettes/goat.png',
-  'img/silhouettes/fox.png',
+  'img/silhouettes/bird.png', 'img/silhouettes/duck.png',
+  'img/silhouettes/goat.png', 'img/silhouettes/fox.png',
+  'img/silhouettes/beaver.png', 'img/silhouettes/muskrat.png',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png'
 ];
