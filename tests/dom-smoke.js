@@ -164,6 +164,16 @@ const noopCtx = new Proxy({}, {
   await sleep(150);
   ok($('gameAnimalSelect').value === 'tortola' && $('mpbrModal').style.display === 'flex', `selectAnimalFromCartilla('tortola') loads Tórtola into MPBR and opens MPBR modal`);
 
+  console.log('\nHunting Season Date Detection (In-Season vs Out-of-Season)');
+  ev(`window.__ballisticTestDate = '2026-11-01T12:00:00'; onGameAnimalChange(); updateReticleView(); renderHuntingLawCartilla();`);
+  ok($('gameAnimalSeasonBanner').textContent.includes('FUERA DE TEMPORADA') && $('ballisticAlerts').textContent.includes('FUERA DE TEMPORADA') && $('firingSolution').textContent.includes('FUERA DE TEMPORADA'), 'Tórtola in November triggers ⛔ FUERA DE TEMPORADA warning in MPBR modal, main alerts bar, and Reticle firing solution');
+  ev(`document.getElementById('hlSearchInput').value = ''; document.getElementById('hlStatusSelect').value = 'open_now'; renderHuntingLawCartilla();`);
+  const novOpenCount = $('huntingLawList').querySelectorAll('.hl-species-card').length;
+  ev(`window.__ballisticTestDate = '2026-06-15T12:00:00'; onGameAnimalChange(); renderHuntingLawCartilla();`);
+  const junOpenCount = $('huntingLawList').querySelectorAll('.hl-species-card').length;
+  ok($('gameAnimalSeasonBanner').textContent.includes('EN TEMPORADA') && novOpenCount === 19 && junOpenCount === 45, `Season calendar accurately distinguishes November (${novOpenCount} open) vs June (${junOpenCount} open, Tórtola EN TEMPORADA)`);
+  ev(`delete window.__ballisticTestDate;`);
+
   console.log(`\n${passed} passed, ${failed} failed`);
   w.close(); server.close();
   process.exit(failed ? 1 : 0);

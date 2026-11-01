@@ -12,7 +12,7 @@
  *
  * Bump CACHE_VERSION whenever the ASSETS list changes (old caches are deleted on activate).
  */
-const CACHE_VERSION = 'v78';
+const CACHE_VERSION = 'v79';
 const CACHE_NAME = 'ballisticpro-' + CACHE_VERSION;
 const NET_TIMEOUT_MS = 3000;
 

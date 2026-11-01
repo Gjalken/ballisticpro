@@ -673,16 +673,23 @@ function renderBallisticAlerts(results) {
     const minEDisplay = m ? Math.round(minE * 1.3558) + 'J' : Math.round(minE) + 'fpe';
     if (maxEthicalDist === null) {
       // Energy is insufficient from the start
-      badges.push(`<span class="bal-alert subsonic"><span class="bal-icon">💀</span>${animalName}: ${I18n.t('alertEnergyLow')} ${minEDisplay})</span>`);
+      badges.push(`<span class="bal-alert subsonic"><span class="bal-icon">💀</span>${esc(animalName)}: ${I18n.t('alertEnergyLow')} ${minEDisplay})</span>`);
     } else {
       const last = results[results.length - 1];
       const lastD = m ? last.rangeM : last.rangeYd;
       if (maxEthicalDist >= lastD - 1) {
         // Sufficient across full range
-        badges.push(`<span class="bal-alert supersonic"><span class="bal-icon">🎯</span>${animalName}: ${I18n.t('alertEthicalTo')} ${Math.round(maxEthicalDist)}${dU}+</span>`);
+        badges.push(`<span class="bal-alert supersonic"><span class="bal-icon">🎯</span>${esc(animalName)}: ${I18n.t('alertEthicalTo')} ${Math.round(maxEthicalDist)}${dU}+</span>`);
       } else {
-        badges.push(`<span class="bal-alert transonic"><span class="bal-icon">🎯</span>${animalName}: ${I18n.t('alertEthicalTo')} ${Math.round(maxEthicalDist)}${dU} (min ${minEDisplay})</span>`);
+        badges.push(`<span class="bal-alert transonic"><span class="bal-icon">🎯</span>${esc(animalName)}: ${I18n.t('alertEthicalTo')} ${Math.round(maxEthicalDist)}${dU} (min ${minEDisplay})</span>`);
       }
+    }
+    // Check hunting season status for the selected animal
+    const seasonCheck = _evalAnimalSeasonStatus(selectedAnimal, 'all');
+    if (seasonCheck.state === 'out_of_season') {
+      badges.push(`<span class="bal-alert subsonic" style="border-color:#ef4444;background:rgba(239,68,68,0.18);color:#fecaca"><span class="bal-icon">⛔</span>${esc(animalName)}: ${I18n.t('outOfSeasonShort')} (${esc(seasonCheck.seasonSummary)})</span>`);
+    } else if (seasonCheck.state === 'closed') {
+      badges.push(`<span class="bal-alert subsonic"><span class="bal-icon">🚫</span>${esc(animalName)}: VEDADA</span>`);
     }
   } else {
     // No animal selected — show final energy
@@ -948,6 +955,22 @@ function renderFiringSolution(sol, scope) {
   const sfpNote = !sol.isTrueSubtension
     ? `<div class="sfp-warning">⚠ ${I18n.t('sfpWarning')} ${scope.magRef}x</div>` : '';
 
+  // Out-of-season alert in Reticle View if target animal is out of season
+  let seasonNote = '';
+  const silId = document.getElementById('reticleSilhouetteSelect')?.value || document.getElementById('gameAnimalSelect')?.value;
+  if (silId && appState.gameAnimalsDB) {
+    const retAnimal = appState.gameAnimalsDB.find(a => a.id === silId);
+    if (retAnimal) {
+      const sc = _evalAnimalSeasonStatus(retAnimal, 'all');
+      const aName = (appState.lang === 'es') ? retAnimal.nameEs : retAnimal.nameEn;
+      if (sc.state === 'out_of_season') {
+        seasonNote = `<div class="sfp-warning" style="background:rgba(239,68,68,0.16);border-color:#ef4444;color:#fecaca;font-weight:700">⛔ ${esc(aName)}: ${I18n.t('outOfSeasonShort')} (${esc(sc.seasonSummary)})</div>`;
+      } else if (sc.state === 'closed') {
+        seasonNote = `<div class="sfp-warning" style="background:rgba(239,68,68,0.16);border-color:#ef4444;color:#fecaca;font-weight:700">🚫 ${esc(aName)}: VEDADA</div>`;
+      }
+    }
+  }
+
   // Apparent values = what you see on the reticle at current magnification (computed by ReticleCalc)
   const appHold = sol.holdover.value;
   const appWind = sol.windage.value;
@@ -972,6 +995,7 @@ function renderFiringSolution(sol, scope) {
 
   container.innerHTML = `
     <h4>${I18n.t('firingSlnTitle')}</h4>
+    ${seasonNote}
     ${sfpNote}
     <div class="solution-grid">
       <div class="sol-item"><span class="sol-label">${I18n.t('holdover')}</span><span class="sol-value accent">${appHold.toFixed(2)} ${sol.holdover.unit} ${sol.holdover.direction === 'down' ? '↓' : '↑'}</span></div>
@@ -1832,6 +1856,55 @@ function onGameAnimalChange() {
   document.getElementById('gameAnimalMinE').textContent =
     fmtE(animal.minEnergyFPE, 1);
 
+  // Evaluate hunting season against today's date
+  const seasonBanner = document.getElementById('gameAnimalSeasonBanner');
+  const seasonEval = _evalAnimalSeasonStatus(animal, 'all');
+  if (seasonBanner) {
+    seasonBanner.style.display = '';
+    if (seasonEval.state === 'out_of_season') {
+      seasonBanner.style.background = 'rgba(239,68,68,0.15)';
+      seasonBanner.style.border = '1.5px solid #ef4444';
+      seasonBanner.style.color = '#fecaca';
+      seasonBanner.innerHTML = `<div style="font-weight:800;color:#f87171;font-size:0.82rem">${esc(I18n.t('outOfSeasonBanner'))}</div>` +
+        `<div style="font-size:0.74rem;margin-top:2px">${
+          lang === 'es'
+            ? `Hoy (${esc(seasonEval.todayStr)}) está fuera del período habilitado (${esc(seasonEval.seasonSummary)}). Caza prohibida en esta fecha.`
+            : `Today (${esc(seasonEval.todayStr)}) is outside the open season (${esc(seasonEval.seasonSummary)}). Hunting prohibited on this date.`
+        }</div>`;
+    } else if (seasonEval.state === 'in_season') {
+      seasonBanner.style.background = 'rgba(34,197,94,0.12)';
+      seasonBanner.style.border = '1px solid rgba(34,197,94,0.4)';
+      seasonBanner.style.color = '#bbf7d0';
+      seasonBanner.innerHTML = `<div style="font-weight:700;color:#4ade80;font-size:0.8rem">${esc(I18n.t('inSeasonBanner'))} (${esc(seasonEval.todayStr)})</div>` +
+        `<div style="font-size:0.73rem;margin-top:1px">${
+          lang === 'es'
+            ? `Temporada activa: ${esc(seasonEval.seasonSummary)} · Zonas: ${esc(seasonEval.openZones.join(', '))}`
+            : `Active season: ${esc(seasonEval.seasonSummary)} · Zones: ${esc(seasonEval.openZones.join(', '))}`
+        }</div>`;
+    } else if (seasonEval.state === 'open_all_year') {
+      seasonBanner.style.background = 'rgba(34,197,94,0.10)';
+      seasonBanner.style.border = '1px solid rgba(34,197,94,0.35)';
+      seasonBanner.style.color = '#bbf7d0';
+      seasonBanner.innerHTML = `<div style="font-weight:700;color:#4ade80;font-size:0.79rem">🟢 ${
+        lang === 'es' ? 'CAZA HABILITADA TODO EL AÑO (Art. 6° Especie Dañina)' : 'OPEN YEAR-ROUND (Art. 6° Harmful Species)'
+      }</div>`;
+    } else if (seasonEval.state === 'special_permit') {
+      seasonBanner.style.background = 'rgba(245,158,11,0.12)';
+      seasonBanner.style.border = '1px solid rgba(245,158,11,0.4)';
+      seasonBanner.style.color = '#fde68a';
+      seasonBanner.innerHTML = `<div style="font-weight:700;color:#fbbf24;font-size:0.79rem">⚠️ ${
+        lang === 'es' ? 'RÉGIMEN ESPECIAL SAG (Solo zonas autorizadas)' : 'SPECIAL SAG REGIME (Authorized zones only)'
+      }</div>`;
+    } else {
+      seasonBanner.style.background = 'rgba(239,68,68,0.15)';
+      seasonBanner.style.border = '1.5px solid #ef4444';
+      seasonBanner.style.color = '#fecaca';
+      seasonBanner.innerHTML = `<div style="font-weight:800;color:#f87171;font-size:0.8rem">🚫 ${
+        lang === 'es' ? 'ESPECIE EN VEDA / CAZA NO HABILITADA' : 'CLOSED / HUNTING PROHIBITED'
+      }</div>`;
+    }
+  }
+
   // Show regulation info (per-zone table) if available
   const regEl = document.getElementById('gameAnimalRegulation');
   const regBody = document.getElementById('gameAnimalRegBody');
@@ -1840,6 +1913,7 @@ function onGameAnimalChange() {
     regBody.innerHTML = '';
     animal.regulations.forEach(r => {
       const tr = document.createElement('tr');
+      const rEval = _evalRegulationSeason(r);
       const isProtected = r.season === 'PROTEGIDA';
       const isZero = r.quota === 0 || r.quota === '0';
       // Format quota: number → "X/día", 0 → "—", string → as-is
@@ -1849,15 +1923,25 @@ function onGameAnimalChange() {
       }
       const notesAttr = r.notes ? ` title="${esc(r.notes)}"` : '';
       const zoneColor = isZero ? '#64748b' : '#e2e8f0';
-      const seasonColor = isProtected ? '#ef4444' : (isZero ? '#64748b' : '#e2e8f0');
+      const seasonColor = isProtected || rEval.state === 'out_of_season'
+        ? '#f87171'
+        : (isZero ? '#64748b' : '#4ade80');
       const quotaColor = isZero ? '#64748b' : '#e2e8f0';
+      const statusDot = rEval.state === 'out_of_season'
+        ? ` <span style="color:#ef4444;font-size:0.68rem">⛔ ${lang === 'es' ? 'Fuera de fecha' : 'Out of season'}</span>`
+        : (rEval.inSeason ? ' <span style="color:#22c55e;font-size:0.68rem">🟢</span>' : '');
       tr.innerHTML = `<td style="padding:3px 4px;color:${zoneColor}"${notesAttr}>${esc(r.zone)}${r.notes ? ' *' : ''}</td>` +
-        `<td style="padding:3px 4px;color:${seasonColor};font-weight:600">${isZero ? '—' : esc(r.season)}</td>` +
+        `<td style="padding:3px 4px;color:${seasonColor};font-weight:600">${isZero ? '—' : esc(r.season)}${statusDot}</td>` +
         `<td style="padding:3px 4px;color:${quotaColor};font-weight:600">${esc(qDisp)}</td>`;
       regBody.appendChild(tr);
     });
   } else {
     regEl.style.display = 'none';
+  }
+
+  // Refresh main ballistic alerts if results exist
+  if (appState.results && appState.results.length) {
+    renderBallisticAlerts(appState.results);
   }
 
   // Show data date
@@ -2082,6 +2166,102 @@ function _isRegPermitted(reg) {
   return true;
 }
 
+const _MONTH_MAP = {
+  ene: 1, jan: 1,
+  feb: 2,
+  mar: 3,
+  abr: 4, apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  ago: 8, aug: 8,
+  sep: 9, set: 9,
+  oct: 10,
+  nov: 11,
+  dic: 12, dec: 12
+};
+
+const _MONTH_NAMES_ES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const _MONTH_NAMES_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function _parseSeasonDateRange(seasonStr) {
+  if (!seasonStr || typeof seasonStr !== 'string') return null;
+  const m = seasonStr.trim().match(/^(\d{1,2})\s+([A-Za-zÁÉÍÓÚáéíóú]{3})\s*[—\-–a]\s*(\d{1,2})\s+([A-Za-zÁÉÍÓÚáéíóú]{3})$/);
+  if (!m) return null;
+  const d1 = parseInt(m[1], 10);
+  const m1 = _MONTH_MAP[m[2].toLowerCase()];
+  const d2 = parseInt(m[3], 10);
+  const m2 = _MONTH_MAP[m[4].toLowerCase()];
+  if (!m1 || !m2 || !d1 || !d2) return null;
+  return { d1, m1, d2, m2 };
+}
+
+function _evalRegulationSeason(reg, refDate) {
+  const now = refDate || (window.__ballisticTestDate ? new Date(window.__ballisticTestDate) : new Date());
+  if (!reg || reg.season === 'PROTEGIDA') {
+    return { state: 'protected', inSeason: false };
+  }
+  if (reg.quota === 0 || reg.quota === '0' || reg.season === '—') {
+    return { state: 'closed', inSeason: false };
+  }
+  const s = (reg.season || '').trim();
+  if (s === 'Todo el año' || s.toLowerCase() === 'year-round') {
+    return { state: 'open_all_year', inSeason: true };
+  }
+  if (s === 'Regulada por SAG') {
+    return { state: 'special_permit', inSeason: true };
+  }
+  const parsed = _parseSeasonDateRange(s);
+  if (parsed) {
+    const mmdd = (now.getMonth() + 1) * 100 + now.getDate();
+    const start = parsed.m1 * 100 + parsed.d1;
+    const end = parsed.m2 * 100 + parsed.d2;
+    const active = start <= end
+      ? (mmdd >= start && mmdd <= end)
+      : (mmdd >= start || mmdd <= end);
+    return { state: active ? 'in_season' : 'out_of_season', inSeason: active };
+  }
+  return { state: 'in_season', inSeason: true };
+}
+
+function _evalAnimalSeasonStatus(animal, zoneFilter, refDate) {
+  const now = refDate || (window.__ballisticTestDate ? new Date(window.__ballisticTestDate) : new Date());
+  const lang = appState.lang || 'es';
+  const mNames = lang === 'es' ? _MONTH_NAMES_ES : _MONTH_NAMES_EN;
+  const todayStr = `${now.getDate()} ${mNames[now.getMonth()]}`;
+  const zf = zoneFilter || 'all';
+
+  if (!animal || !animal.regulations || !animal.regulations.length) {
+    if (animal && animal.status === 'dañina') {
+      return { state: 'open_all_year', inSeason: true, openZones: ['Nacional'], seasonSummary: 'Todo el año', todayStr };
+    }
+    return { state: 'in_season', inSeason: true, openZones: [], seasonSummary: '—', todayStr };
+  }
+
+  const matchingRegs = animal.regulations.filter(r => _zoneAppliesTo(r.zone, zf));
+  const evals = matchingRegs.map(r => ({ reg: r, ev: _evalRegulationSeason(r, now) }));
+
+  const openZones = evals.filter(x => x.ev.inSeason).map(x => x.reg.zone.replace(/\s*\(.*\)/, ''));
+  const permittedSeasons = [...new Set(
+    evals.filter(x => _isRegPermitted(x.reg)).map(x => x.reg.season)
+  )];
+  const seasonSummary = permittedSeasons.join(' / ') || '—';
+
+  if (evals.some(x => x.ev.state === 'open_all_year')) {
+    return { state: 'open_all_year', inSeason: true, openZones, seasonSummary, todayStr };
+  }
+  if (evals.some(x => x.ev.state === 'in_season')) {
+    return { state: 'in_season', inSeason: true, openZones, seasonSummary, todayStr };
+  }
+  if (evals.some(x => x.ev.state === 'special_permit')) {
+    return { state: 'special_permit', inSeason: true, openZones, seasonSummary, todayStr };
+  }
+  if (evals.some(x => x.ev.state === 'out_of_season')) {
+    return { state: 'out_of_season', inSeason: false, openZones: [], seasonSummary, todayStr };
+  }
+  return { state: 'closed', inSeason: false, openZones: [], seasonSummary, todayStr };
+}
+
 function openHuntingLaw() {
   const modal = document.getElementById('huntingLawModal');
   if (!modal) return;
@@ -2140,7 +2320,12 @@ function renderHuntingLawCartilla() {
 
   const filtered = clAnimals.filter(a => {
     if (catFilter !== 'all' && a.category !== catFilter) return false;
-    if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+    if (statusFilter === 'open_now') {
+      const sc = _evalAnimalSeasonStatus(a, zoneFilter);
+      if (!sc.inSeason) return false;
+    } else if (statusFilter !== 'all' && a.status !== statusFilter) {
+      return false;
+    }
     if (zoneFilter !== 'all') {
       const regs = a.regulations || [];
       const allowedInZone = regs.some(r => _zoneAppliesTo(r.zone, zoneFilter) && _isRegPermitted(r));
@@ -2202,7 +2387,9 @@ function renderHuntingLawCartilla() {
 
   listEl.innerHTML = filtered.map(a => {
     const st = statusMeta[a.status] || statusMeta.regulada;
-    const badgeSvg = _getSpeciesBadgeSVG(a, st.color);
+    const sc = _evalAnimalSeasonStatus(a, zoneFilter);
+    const isOutOfSeason = sc.state === 'out_of_season';
+    const badgeSvg = _getSpeciesBadgeSVG(a, isOutOfSeason ? '#ef4444' : st.color);
     const emoji = _getAnimalEmoji(a);
     const name = lang === 'es' ? a.nameEs : a.nameEn;
     const catBadge = a.category === 'mayor'
@@ -2214,8 +2401,16 @@ function renderHuntingLawCartilla() {
       : `⌀ ${(a.vitalZoneCm / 2.54).toFixed(1)} in`;
     const minEDisp = fmtE(a.minEnergyFPE, 0);
 
+    let seasonChip = '';
+    if (sc.state === 'out_of_season') {
+      seasonChip = `<span class="hl-season-chip out" style="padding:1px 7px;border-radius:99px;background:rgba(239,68,68,0.18);border:1px solid #ef4444;color:#fca5a5;font-weight:700">${esc(I18n.t('outOfSeasonShort'))}</span>`;
+    } else if (sc.state === 'in_season' || sc.state === 'open_all_year') {
+      seasonChip = `<span class="hl-season-chip open" style="padding:1px 7px;border-radius:99px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.45);color:#4ade80;font-weight:700">${esc(I18n.t('inSeasonShort'))}</span>`;
+    }
+
     const rowsHtml = (a.regulations || []).map(r => {
       const permitted = _isRegPermitted(r);
+      const rEval = _evalRegulationSeason(r);
       const matchesSelectedZone = zoneFilter === 'all' || _zoneAppliesTo(r.zone, zoneFilter);
       let qDisp = r.quota;
       if (typeof r.quota === 'number') {
@@ -2227,14 +2422,18 @@ function renderHuntingLawCartilla() {
         ? (lang === 'es' ? 'Vedada en esta zona' : 'Closed in this zone')
         : r.season;
 
+      const dateTag = rEval.state === 'out_of_season'
+        ? ` <span style="color:#f87171;font-size:0.66rem;font-weight:700">⛔ ${lang === 'es' ? 'Fuera de fecha' : 'Out of season'}</span>`
+        : (rEval.inSeason ? ` <span style="color:#4ade80;font-size:0.66rem">🟢</span>` : '');
+
       const rowOpacity = (!matchesSelectedZone && zoneFilter !== 'all') ? '0.4' : (permitted ? '1' : '0.55');
       const highlightBg = (zoneFilter !== 'all' && matchesSelectedZone && permitted)
-        ? 'background:rgba(34,197,94,0.08);'
+        ? (rEval.inSeason ? 'background:rgba(34,197,94,0.08);' : 'background:rgba(239,68,68,0.08);')
         : '';
-      const seasonColor = r.season === 'PROTEGIDA'
-        ? '#ef4444'
+      const seasonColor = (r.season === 'PROTEGIDA' || rEval.state === 'out_of_season')
+        ? '#f87171'
         : (permitted ? '#e2e8f0' : '#64748b');
-      const quotaColor = permitted ? '#22c55e' : '#ef4444';
+      const quotaColor = permitted ? (rEval.inSeason ? '#22c55e' : '#f59e0b') : '#ef4444';
 
       const notesHtml = r.notes
         ? `<div style="font-size:0.68rem;color:#94a3b8;font-weight:400;margin-top:1px">ℹ️ ${esc(r.notes)}</div>`
@@ -2242,12 +2441,13 @@ function renderHuntingLawCartilla() {
 
       return `<tr style="border-top:1px solid rgba(255,255,255,0.05);opacity:${rowOpacity};${highlightBg}">
         <td style="padding:4px 6px;font-weight:600;color:#cbd5e1;width:34%">${esc(r.zone)}</td>
-        <td style="padding:4px 6px;color:${seasonColor};font-weight:600;width:42%">${esc(seasonDisp)}${notesHtml}</td>
+        <td style="padding:4px 6px;color:${seasonColor};font-weight:600;width:42%">${esc(seasonDisp)}${dateTag}${notesHtml}</td>
         <td style="padding:4px 6px;color:${quotaColor};font-weight:700;font-family:var(--font-mono);text-align:right;width:24%">${esc(qDisp)}</td>
       </tr>`;
     }).join('');
 
-    return `<div class="hl-species-card" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 11px">
+    const cardBorder = isOutOfSeason ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.08)';
+    return `<div class="hl-species-card" style="background:rgba(255,255,255,0.025);border:1px solid ${cardBorder};border-radius:10px;padding:9px 11px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px">
         <div style="display:flex;align-items:center;gap:9px;min-width:0;flex:1">
           ${badgeSvg}
@@ -2257,6 +2457,7 @@ function renderHuntingLawCartilla() {
               <em style="font-size:0.74rem;color:#64748b">${esc(a.scientificName || '')}</em>
             </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;font-size:0.68rem">
+              ${seasonChip}
               <span style="padding:1px 7px;border-radius:99px;background:${st.bg};border:1px solid ${st.border};color:${st.color};font-weight:600">${esc(st.label)}</span>
               <span style="padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.05);color:${catColor};font-weight:600">${esc(catBadge)}</span>
               <span style="color:#94a3b8;font-family:var(--font-mono)">${esc(vitalDisp)} · E≥${esc(minEDisp)}</span>
