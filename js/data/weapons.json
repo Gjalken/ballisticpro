@@ -16,6 +16,10 @@
       "magRef": 12,
       "focalPlane": "SFP",
       "defaultAmmo": "Winchester Power Point .300WM 180gr",
+      "maxRangeYd": 1000,
+      "maxRangeM": 1000,
+      "stepYd": 25,
+      "stepM": 25,
       "notes": "Cañón button-rifled 24\", acción Howa 1500. Datos de Strelok+: scope 4.9cm, click 1/8 MOA"
     },
     {
@@ -34,6 +38,10 @@
       "magRef": 13,
       "focalPlane": "SFP",
       "defaultAmmo": "Winchester Power Point .308 180gr",
+      "maxRangeYd": 1000,
+      "maxRangeM": 1000,
+      "stepYd": 25,
+      "stepM": 25,
       "notes": "Cañón button-rifled free-floating 22\". Datos de Strelok+: scope 3.8cm, zero 100m"
     },
     {
@@ -53,6 +61,10 @@
       "focalPlane": "SFP",
       "defaultAmmo": "Remington Thunderbolt .22 LR 40gr LRN",
       "defaultVelFps": 1255,
+      "maxRangeYd": 200,
+      "maxRangeM": 200,
+      "stepYd": 10,
+      "stepM": 10,
       "notes": "Cerrojo .22 LR, cañón 21\" paso 1:16\" RH, AccuTrigger. Zero 50m (55 yd)"
     },
     {

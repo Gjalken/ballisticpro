@@ -279,6 +279,12 @@ function onWeaponSelect() {
   document.getElementById('twistDir').value = w.twistDir;
   document.getElementById('scopeHeight').value = m ? (w.scopeHeightIn * 2.54).toFixed(2) : w.scopeHeightIn;
   document.getElementById('zeroRange').value = m ? Math.round(w.zeroRangeYd * 0.9144) : w.zeroRangeYd;
+  if (w.maxRangeM || w.maxRangeYd) {
+    document.getElementById('maxRange').value = m ? (w.maxRangeM || Math.round(w.maxRangeYd * 0.9144)) : (w.maxRangeYd || Math.round(w.maxRangeM / 0.9144));
+  }
+  if (w.stepM || w.stepYd) {
+    document.getElementById('rangeStep').value = m ? (w.stepM || Math.round(w.stepYd * 0.9144)) : (w.stepYd || Math.round(w.stepM / 0.9144));
+  }
 
   // Fill optics if available in weapon profile
   if (w.clickElev) document.getElementById('clickElev').value = w.clickElev;
