@@ -114,6 +114,11 @@ const noopCtx = new Proxy({}, {
   cals = optionCals();
   ok(cals.length > 0 && cals.every(c => c === '.308'), `.308 rifle offers ONLY .308 loads (${cals.length}: ${[...new Set(cals)].join(',')})`);
   ok(ev(`appState.projectilesDB.firearms[+document.getElementById('projSelect').value].name`) === 'Winchester Power Point .308 180gr', 'default ammo of the weapon is selected');
+  ev(`document.getElementById('caliberSelect').value = 'Savage Mark II .22 LR'; onWeaponSelect();`);
+  cals = optionCals();
+  const lr22Names = ev(`Array.from(document.getElementById('projSelect').options).filter(o => o.value !== 'custom').map(o => appState.projectilesDB.firearms[+o.value].name)`);
+  ok(cals.length > 0 && cals.every(c => c === '.22LR'), `Savage Mark II .22 LR offers ONLY .22LR loads (${cals.length})`);
+  ok(lr22Names.includes('Remington Thunderbolt .22 LR 40gr LRN') && lr22Names.includes('Remington Golden Bullet .22 LR 36gr HP'), 'both Remington .22 LR loads (Thunderbolt 40gr LRN & Golden Bullet 36gr HP) are available');
   ev(`document.getElementById('caliberSelect').value = 'custom'; onWeaponSelect();`);
   cals = optionCals();
   ok(new Set(cals).size > 1 && $('projSelect').querySelectorAll('optgroup').length > 1, 'custom weapon shows every calibre, grouped');
