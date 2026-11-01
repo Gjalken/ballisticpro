@@ -1069,7 +1069,7 @@
         }
       ],
       "bodyHeightCm": 20,
-      "silhouetteType": "fox"
+      "silhouetteType": "mink"
     },
     {
       "id": "castor",
@@ -1090,7 +1090,7 @@
         }
       ],
       "bodyHeightCm": 30,
-      "silhouetteType": "generic"
+      "silhouetteType": "beaver"
     },
     {
       "id": "rata_almizclera",
@@ -1111,7 +1111,7 @@
         }
       ],
       "bodyHeightCm": 12,
-      "silhouetteType": "generic"
+      "silhouetteType": "muskrat"
     },
     {
       "id": "zorro_gris",

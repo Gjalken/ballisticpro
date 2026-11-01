@@ -150,7 +150,10 @@ const noopCtx = new Proxy({}, {
   console.log('\nCartilla de Caza SAG (Ley 19.473)');
   ev('openHuntingLaw()');
   const allCards = $('huntingLawList').querySelectorAll('.hl-species-card').length;
-  ok($('huntingLawModal').style.display === 'flex' && allCards === 45, `Cartilla opens and renders all 45 Chilean species (got ${allCards})`);
+  const allSvgs = $('huntingLawList').querySelectorAll('.hl-species-card svg').length;
+  const hasTargetFallback = Array.from($('reticleSilhouetteSelect').options).some(o => o.textContent.includes('🎯'));
+  ok($('huntingLawModal').style.display === 'flex' && allCards === 45 && allSvgs === 45, `Cartilla opens and renders all 45 Chilean species with 45 custom SVG medallions (got ${allCards}/${allSvgs})`);
+  ok(!hasTargetFallback && ev(`_getAnimalEmoji({id:'castor'})`) === '🦫' && ev(`_getAnimalEmoji({id:'rata_almizclera'})`) === '🐀' && ev(`_getAnimalEmoji({id:'vison'})`) === '🦦', 'Castor (🦫), Rata almizclera (🐀), Visón (🦦) and all species have specific icons (zero 🎯 fallbacks)');
   ev(`document.getElementById('hlZoneSelect').value = 'Norte'; renderHuntingLawCartilla();`);
   const norteCards = $('huntingLawList').querySelectorAll('.hl-species-card').length;
   ok(norteCards > 0 && norteCards < allCards, `Zone filter 'Norte' filters to species allowed in Zona Norte (${norteCards} of ${allCards})`);

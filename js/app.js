@@ -1466,6 +1466,247 @@ function clearDOPE() {
   renderDopeLog();
 }
 
+// ─── Species Specific Icons & Tactical SVG Medallions ───
+function _getAnimalEmoji(a) {
+  if (!a) return '🦌';
+  const id = a.id || '';
+  const exact = {
+    castor: '🦫',
+    rata_almizclera: '🐀',
+    vison: '🦦',
+    conejo: '🐰',
+    liebre: '🐇',
+    ardilla: '🐿️',
+    zorro_gris: '🦊',
+    coyote: '🦊',
+    jabali: '🐗',
+    guanaco: '🦙',
+    cabra_asilvestrada: '🐐',
+    bagual: '🐂',
+    burro_asilvestrado: '🫏',
+    ciervo_rojo: '🦌',
+    gamo: '🦌',
+    corzo: '🦌',
+    ciervo_axis: '🦌',
+    venado_cola_blanca: '🦌',
+    alce: '🫎',
+    caiquen: '🪿',
+    canquen: '🪿',
+    pato_criollo: '🦆',
+    pato_juarjual: '🦆',
+    pato_real: '🦆',
+    pato_jergon_grande: '🦆',
+    pato_jergon_chico: '🦆',
+    pato_colorado: '🦆',
+    tagua: '🦆',
+    tagua_chica: '🦆',
+    yeco: '🐦‍⬛',
+    tortola: '🕊️',
+    tortola_cordillerana: '🕊️',
+    paloma_alas_blancas: '🕊️',
+    paloma: '🕊️',
+    codorniz: '🐦',
+    perdiz_chilena: '🐦',
+    faisan: '🦃',
+    pavo_salvaje: '🦃',
+    traro: '🦅',
+    cotorra: '🦜',
+    mirlo: '🐦‍⬛',
+    tordo: '🐦‍⬛',
+    cuervo: '🐦‍⬛',
+    estornino: '🐦‍⬛',
+    zorzal: '🐤',
+    zorzal_jf: '🐤',
+    chirihue: '🐤',
+    chirihue_dorado: '🐤',
+    yal: '🐤',
+    diuca: '🐤',
+    jilguero: '🐤',
+    gorrion: '🐤'
+  };
+  if (exact[id]) return exact[id];
+  const byType = {
+    deer: '🦌', bovine: '🐂', camelid: '🦙', equine: '🫏',
+    boar: '🐗', rabbit: '🐇', bird: '🐦', goat: '🐐',
+    fox: '🦊', beaver: '🦫', muskrat: '🐀', mink: '🦦'
+  };
+  return byType[a.silhouetteType] || '🦌';
+}
+
+function _getSpeciesArchetype(a) {
+  const id = (a && a.id) || '';
+  if (id === 'castor') return 'beaver';
+  if (id === 'rata_almizclera') return 'muskrat';
+  if (id === 'vison') return 'mink';
+  if (id === 'conejo') return 'rabbit';
+  if (id === 'liebre') return 'hare';
+  if (id === 'ardilla') return 'squirrel';
+  if (id === 'zorro_gris' || id === 'coyote') return 'fox';
+  if (id === 'jabali') return 'boar';
+  if (id === 'guanaco') return 'camelid';
+  if (id === 'cabra_asilvestrada') return 'goat';
+  if (id === 'bagual') return 'bovine';
+  if (id === 'burro_asilvestrado') return 'donkey';
+  if (id === 'corzo') return 'roedeer';
+  if (id === 'gamo') return 'fallow';
+  if (id.startsWith('ciervo') || id === 'venado_cola_blanca' || id === 'alce') return 'stag';
+  if (id.startsWith('pato_')) return 'duck';
+  if (id === 'caiquen' || id === 'canquen') return 'goose';
+  if (id.startsWith('tagua')) return 'coot';
+  if (id === 'yeco') return 'cormorant';
+  if (id.startsWith('tortola') || id.startsWith('paloma')) return 'dove';
+  if (id === 'codorniz') return 'quail';
+  if (id === 'perdiz_chilena') return 'partridge';
+  if (id === 'faisan' || id === 'pavo_salvaje') return 'pheasant';
+  if (id === 'traro') return 'raptor';
+  if (id === 'cotorra') return 'parrot';
+  return 'songbird';
+}
+
+function _getSpeciesBadgeSVG(animal, accentColor) {
+  const arch = _getSpeciesArchetype(animal);
+  const col = accentColor || '#f59e0b';
+  // Archetype SVG artwork (64x64 viewBox) + vital zone [vx, vy]
+  const shapes = {
+    beaver: {
+      vx: 25, vy: 36,
+      body: `<path d="M12,38 C10,34 12,28 17,26 C18,23 20,23 21,26 C27,21 37,20 44,27 C47,31 48,35 48,38 L58,41 C61,43 61,47 57,48 C52,49 46,46 43,43 L42,48 L37,48 L37,44 L24,44 L23,48 L18,48 L19,42 C15,41 13,40 12,38 Z" fill="currentColor"/>
+             <path d="M48,39 L58,42 C60,43.5 60,46.5 57,47.5 L45,43.5 Z" fill="none" stroke="#0b111e" stroke-width="1.1"/>
+             <line x1="50" y1="40" x2="53" y2="46" stroke="#0b111e" stroke-width="0.9"/>
+             <line x1="54" y1="41" x2="57" y2="47" stroke="#0b111e" stroke-width="0.9"/>
+             <rect x="12.5" y="36.5" width="2" height="3.2" rx="0.5" fill="#fbbf24"/>`
+    },
+    muskrat: {
+      vx: 24, vy: 36,
+      body: `<path d="M11,37 C10,33 14,29 19,28 C20,25 22,25 23,28 C29,23 38,24 43,31 C45,34 46,38 45,41 L42,47 L37,47 L38,42 L24,42 L23,47 L19,47 L20,41 C15,40 12,39 11,37 Z" fill="currentColor"/>
+             <path d="M44,39 Q53,41 59,36 Q61,34 59,38 Q54,44 43,42 Z" fill="currentColor"/>
+             <line x1="9" y1="35" x2="14" y2="36" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+             <line x1="9" y1="38" x2="14" y2="37.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>`
+    },
+    mink: {
+      vx: 23, vy: 35,
+      body: `<path d="M8,34 C8,30 12,28 16,28 C17,26 19,26 20,28 C27,25 36,22 44,28 C48,31 50,35 58,38 C60,39 59,43 55,43 C49,43 45,39 42,37 L41,47 L37,47 L37,37 C32,34 26,35 23,38 L22,47 L18,47 L18,38 C13,37 9,36 8,34 Z" fill="currentColor"/>`
+    },
+    rabbit: {
+      vx: 25, vy: 37,
+      body: `<path d="M16,35 C14,31 16,26 20,24 L19,13 C19,10 22,10 23,14 L24,22 L26,12 C27,9 30,10 29,14 L27,24 C34,24 43,27 46,35 C49,34 51,36 50,39 C49,41 47,41 45,41 L44,48 L36,48 L38,43 L26,43 L24,48 L19,48 L21,40 C18,39 17,37 16,35 Z" fill="currentColor"/>`
+    },
+    hare: {
+      vx: 25, vy: 35,
+      body: `<path d="M14,32 C12,28 15,24 19,22 L18,8 C18,5 21,5 22,9 L23,20 L26,7 C27,4 30,5 29,9 L26,22 C34,22 43,25 47,33 C50,32 52,35 50,37 L47,49 L42,49 L43,40 L27,40 L24,49 L19,49 L21,38 C17,37 15,35 14,32 Z" fill="currentColor"/>`
+    },
+    squirrel: {
+      vx: 24, vy: 36,
+      body: `<path d="M15,34 C14,30 17,26 20,25 L20,21 L23,24 C28,25 34,28 36,35 C39,28 43,18 50,19 C56,20 56,29 51,35 C47,40 44,42 40,44 L39,48 L31,48 L32,43 L23,43 L21,48 L17,48 L19,39 C16,38 15,36 15,34 Z" fill="currentColor"/>`
+    },
+    fox: {
+      vx: 23, vy: 34,
+      body: `<path d="M8,30 L13,27 L14,20 L18,25 L20,20 L22,26 C29,26 38,27 44,30 C50,28 57,27 60,32 C58,37 51,38 45,36 L44,49 L40,49 L40,39 L25,39 L23,49 L19,49 L20,37 C15,35 11,33 8,30 Z" fill="currentColor"/>`
+    },
+    boar: {
+      vx: 26, vy: 34,
+      body: `<path d="M8,36 L12,31 L16,25 L18,21 L21,24 C28,20 39,22 47,29 C50,32 51,36 51,40 L54,43 L52,44 L49,41 L48,49 L44,49 L44,42 L26,42 L24,49 L20,49 L20,41 C15,40 11,38 8,36 Z" fill="currentColor"/>
+             <path d="M11,35 L9,30 L13,33 Z" fill="#fef08a"/>`
+    },
+    stag: {
+      vx: 25, vy: 35,
+      body: `<path d="M13,26 L18,23 L21,26 L24,30 L44,30 C48,30 50,33 50,37 L49,51 L45,51 L45,40 L27,40 L25,51 L21,51 L21,37 L17,29 Z" fill="currentColor"/>
+             <path d="M20,24 C20,16 25,11 32,9 M23,19 L18,14 M25,15 L23,9 M28,12 L28,7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`
+    },
+    fallow: {
+      vx: 25, vy: 35,
+      body: `<path d="M13,26 L18,23 L21,26 L24,30 L44,30 C48,30 50,33 50,37 L49,51 L45,51 L45,40 L27,40 L25,51 L21,51 L21,37 L17,29 Z" fill="currentColor"/>
+             <path d="M20,24 C21,16 26,10 34,10 C31,14 28,17 22,21 Z" fill="currentColor"/>`
+    },
+    roedeer: {
+      vx: 25, vy: 35,
+      body: `<path d="M14,26 L19,23 L22,26 L25,30 L43,30 C46,30 48,33 48,37 L47,51 L43,51 L43,40 L27,40 L25,51 L21,51 L21,37 L18,29 Z" fill="currentColor"/>
+             <path d="M20,24 L20,13 M20,17 L17,14 M20,15 L23,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`
+    },
+    camelid: {
+      vx: 26, vy: 36,
+      body: `<path d="M14,15 L18,13 L19,9 L21,13 L23,9 L23,15 L25,29 L44,29 C48,29 50,32 50,36 L49,52 L45,52 L45,40 L28,40 L26,52 L22,52 L22,38 L18,19 Z" fill="currentColor"/>`
+    },
+    goat: {
+      vx: 25, vy: 35,
+      body: `<path d="M13,27 L16,32 L18,29 L21,31 L24,29 L43,29 C47,29 49,32 49,36 L48,50 L44,50 L44,40 L27,40 L25,50 L21,50 L21,37 L17,29 Z" fill="currentColor"/>
+             <path d="M19,24 C22,14 31,12 37,17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>`
+    },
+    bovine: {
+      vx: 26, vy: 34,
+      body: `<path d="M10,30 L15,25 L22,23 C26,20 31,21 35,24 L48,25 C51,26 53,30 53,35 L52,50 L48,50 L47,41 L27,41 L25,50 L21,50 L21,40 L14,35 Z" fill="currentColor"/>
+             <path d="M15,25 C12,19 15,15 20,17" fill="none" stroke="#fef08a" stroke-width="2.2" stroke-linecap="round"/>`
+    },
+    donkey: {
+      vx: 25, vy: 35,
+      body: `<path d="M11,29 L16,23 L17,12 C17,9 20,9 20,13 L20,21 L23,12 C24,9 26,10 25,14 L23,23 L27,29 L45,29 C49,29 51,32 51,37 L50,50 L46,50 L46,40 L28,40 L26,50 L22,50 L22,38 L16,31 Z" fill="currentColor"/>`
+    },
+    duck: {
+      vx: 36, vy: 35,
+      body: `<path d="M54,24 L48,24 C46,19 40,19 38,24 C36,28 33,30 27,30 L12,32 L16,38 C20,42 36,43 43,39 C47,36 48,31 46,27 L54,27 C56,27 56,24 54,24 Z" fill="currentColor"/>
+             <path d="M12,46 Q22,44 32,46 T52,46" fill="none" stroke="${col}" stroke-width="1.3" opacity="0.55"/>`
+    },
+    goose: {
+      vx: 34, vy: 34,
+      body: `<path d="M51,16 L46,16 C44,12 39,13 39,18 L37,28 C31,27 20,28 13,33 L18,39 C23,42 33,42 39,39 L37,49 L33,49 M39,39 L42,49 L45,49 M39,39 C44,36 45,30 43,25 L44,19 L51,18 Z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>`
+    },
+    coot: {
+      vx: 35, vy: 35,
+      body: `<path d="M52,25 L46,24 C44,19 38,20 37,25 C31,24 19,26 14,35 L18,40 C24,43 38,43 44,38 C47,35 47,30 45,27 L52,27 Z" fill="currentColor"/>
+             <ellipse cx="46" cy="23" rx="2.2" ry="3" fill="#f8fafc"/>
+             <path d="M12,46 Q22,44 32,46 T52,46" fill="none" stroke="${col}" stroke-width="1.3" opacity="0.55"/>`
+    },
+    cormorant: {
+      vx: 33, vy: 36,
+      body: `<path d="M52,15 L44,15 C41,12 37,14 38,19 L36,29 C29,29 20,33 14,41 L21,43 C28,44 37,42 41,37 C44,33 43,26 42,20 L50,18 L51,20 Z" fill="currentColor"/>`
+    },
+    dove: {
+      vx: 36, vy: 33,
+      body: `<path d="M51,22 L46,22 C44,17 38,18 37,23 C33,26 25,28 10,36 L14,39 L25,35 C30,38 35,39 39,37 L37,47 L42,47 L40,37 C45,34 47,29 45,25 L51,24 Z" fill="currentColor"/>`
+    },
+    quail: {
+      vx: 35, vy: 34,
+      body: `<path d="M49,24 L45,23 C43,18 37,19 35,24 C28,23 19,27 15,36 L20,39 C26,42 36,42 41,38 L39,47 L44,47 L42,37 C46,34 47,29 45,26 L49,26 Z" fill="currentColor"/>
+             <path d="M41,19 C42,13 46,11 48,14 C48,16 45,17 43,19" fill="currentColor" stroke="currentColor" stroke-width="1.2"/>`
+    },
+    partridge: {
+      vx: 34, vy: 34,
+      body: `<path d="M49,23 L44,23 C42,19 37,20 35,25 C27,24 18,28 15,37 C19,41 34,42 40,38 L38,47 L43,47 L41,37 C45,34 46,29 44,25 L49,25 Z" fill="currentColor"/>`
+    },
+    pheasant: {
+      vx: 38, vy: 33,
+      body: `<path d="M54,22 L49,22 C47,17 42,18 41,23 C36,26 29,27 7,35 L9,38 L28,34 C33,37 38,38 42,36 L40,46 L45,46 L43,36 C48,33 49,28 48,24 L54,24 Z" fill="currentColor"/>`
+    },
+    raptor: {
+      vx: 33, vy: 32,
+      body: `<path d="M48,17 C45,13 38,14 36,19 L33,15 L33,20 C27,23 20,30 16,40 L23,41 L29,37 L33,48 L38,48 L36,37 C41,33 43,27 42,21 L47,21 L46,24 Z" fill="currentColor"/>`
+    },
+    parrot: {
+      vx: 35, vy: 31,
+      body: `<path d="M47,19 C44,14 37,15 36,21 C31,25 23,31 11,44 L15,46 L28,35 C33,37 38,36 41,33 L39,42 L43,42 L42,32 C45,28 45,23 44,21 L47,23 C49,21 49,19 47,19 Z" fill="currentColor"/>`
+    },
+    songbird: {
+      vx: 35, vy: 33,
+      body: `<path d="M51,23 L45,23 C43,18 37,19 36,24 C31,26 24,29 12,35 L15,39 L26,34 C31,37 36,38 40,36 L38,46 L43,46 L41,36 C45,33 46,28 45,25 L51,25 Z" fill="currentColor"/>`
+    }
+  };
+
+  const s = shapes[arch] || shapes.stag;
+  return `<svg viewBox="0 0 64 64" width="42" height="42" style="flex-shrink:0;display:block;color:#e2e8f0;background:radial-gradient(circle at 50% 50%, rgba(30,41,59,0.95) 0%, rgba(11,17,30,0.98) 100%);border:1.5px solid ${col};border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.45), inset 0 0 8px rgba(255,255,255,0.04)">
+    <!-- Scope crosshair ticks -->
+    <line x1="32" y1="2" x2="32" y2="9" stroke="${col}" stroke-width="1" opacity="0.45"/>
+    <line x1="32" y1="55" x2="32" y2="62" stroke="${col}" stroke-width="1" opacity="0.45"/>
+    <line x1="2" y1="32" x2="9" y2="32" stroke="${col}" stroke-width="1" opacity="0.45"/>
+    <line x1="55" y1="32" x2="62" y2="32" stroke="${col}" stroke-width="1" opacity="0.45"/>
+    <circle cx="32" cy="32" r="26" fill="none" stroke="${col}" stroke-width="0.6" stroke-dasharray="3,3" opacity="0.35"/>
+    <!-- Species Silhouette -->
+    ${s.body}
+    <!-- Vital Zone Target Dot -->
+    <circle cx="${s.vx}" cy="${s.vy}" r="4.2" fill="rgba(239,68,68,0.28)" stroke="#ef4444" stroke-width="1.1"/>
+    <circle cx="${s.vx}" cy="${s.vy}" r="1.5" fill="#ef4444"/>
+  </svg>`;
+}
+
 // ─── Game Animals / Ethical Hunting Range ───
 function populateGameAnimalSelect() {
   const sel = document.getElementById('gameAnimalSelect');
@@ -1508,7 +1749,7 @@ function populateGameAnimalSelect() {
     items.forEach(a => {
       const opt = document.createElement('option');
       opt.value = a.id;
-      opt.textContent = lang === 'es' ? a.nameEs : a.nameEn;
+      opt.textContent = `${_getAnimalEmoji(a)} ${lang === 'es' ? a.nameEs : a.nameEn}`;
       grp.appendChild(opt);
     });
     sel.appendChild(grp);
@@ -1526,17 +1767,11 @@ function populateReticleSilhouetteSelect() {
 
   sel.innerHTML = '<option value="">—</option>';
 
-  // Group by silhouette type for compact display
-  const typeLabels = {
-    deer: '🦌', bovine: '🐂', camelid: '🦙', equine: '🐴',
-    boar: '🐗', rabbit: '🐇', bird: '🐦', goat: '🐐', fox: '🦊'
-  };
-
-  // Simple flat list — all animals, no category/region grouping
+  // Simple flat list — all animals, with specific species icon
   appState.gameAnimalsDB.forEach(a => {
     const opt = document.createElement('option');
     opt.value = a.id;
-    const icon = typeLabels[a.silhouetteType] || '🎯';
+    const icon = _getAnimalEmoji(a);
     opt.textContent = `${icon} ${lang === 'es' ? a.nameEs : a.nameEn}`;
     sel.appendChild(opt);
   });
@@ -1944,11 +2179,6 @@ function renderHuntingLawCartilla() {
     return;
   }
 
-  const typeIcons = {
-    deer: '🦌', bovine: '🐂', camelid: '🦙', equine: '🐴',
-    boar: '🐗', rabbit: '🐇', bird: '🐦', goat: '🐐', fox: '🦊'
-  };
-
   const statusMeta = {
     regulada: {
       label: lang === 'es' ? 'Art. 5° Temporada Regulada' : 'Art. 5° Regulated Season',
@@ -1971,13 +2201,14 @@ function renderHuntingLawCartilla() {
   };
 
   listEl.innerHTML = filtered.map(a => {
-    const icon = typeIcons[a.silhouetteType] || '🎯';
+    const st = statusMeta[a.status] || statusMeta.regulada;
+    const badgeSvg = _getSpeciesBadgeSVG(a, st.color);
+    const emoji = _getAnimalEmoji(a);
     const name = lang === 'es' ? a.nameEs : a.nameEn;
     const catBadge = a.category === 'mayor'
       ? (lang === 'es' ? 'Caza Mayor' : 'Big Game')
       : (lang === 'es' ? 'Caza Menor' : 'Small Game');
     const catColor = a.category === 'mayor' ? '#f59e0b' : '#a78bfa';
-    const st = statusMeta[a.status] || statusMeta.regulada;
     const vitalDisp = isMetric
       ? `⌀ ${a.vitalZoneCm} cm`
       : `⌀ ${(a.vitalZoneCm / 2.54).toFixed(1)} in`;
@@ -2018,16 +2249,18 @@ function renderHuntingLawCartilla() {
 
     return `<div class="hl-species-card" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 11px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-        <div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:1rem">${icon}</span>
-            <strong style="font-size:0.88rem;color:#f8fafc">${esc(name)}</strong>
-            <em style="font-size:0.74rem;color:#64748b">${esc(a.scientificName || '')}</em>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;font-size:0.68rem">
-            <span style="padding:1px 7px;border-radius:99px;background:${st.bg};border:1px solid ${st.border};color:${st.color};font-weight:600">${esc(st.label)}</span>
-            <span style="padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.05);color:${catColor};font-weight:600">${esc(catBadge)}</span>
-            <span style="color:#94a3b8;font-family:var(--font-mono)">${esc(vitalDisp)} · E≥${esc(minEDisp)}</span>
+        <div style="display:flex;align-items:center;gap:9px;min-width:0;flex:1">
+          ${badgeSvg}
+          <div style="min-width:0;flex:1">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <strong style="font-size:0.88rem;color:#f8fafc">${emoji} ${esc(name)}</strong>
+              <em style="font-size:0.74rem;color:#64748b">${esc(a.scientificName || '')}</em>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;font-size:0.68rem">
+              <span style="padding:1px 7px;border-radius:99px;background:${st.bg};border:1px solid ${st.border};color:${st.color};font-weight:600">${esc(st.label)}</span>
+              <span style="padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.05);color:${catColor};font-weight:600">${esc(catBadge)}</span>
+              <span style="color:#94a3b8;font-family:var(--font-mono)">${esc(vitalDisp)} · E≥${esc(minEDisp)}</span>
+            </div>
           </div>
         </div>
         <button type="button" onclick="selectAnimalFromCartilla('${esc(a.id)}')" style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;border-radius:6px;padding:4px 9px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap">${esc(I18n.t('hlUseInMPBR'))}</button>

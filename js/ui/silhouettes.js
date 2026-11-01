@@ -20,13 +20,16 @@ const Silhouettes = (() => {
     bird:    { x: 0.78, y: 0.47, rFactor: 0.09 },  // faces RIGHT (dove), chest center
     goat:    { x: 0.44, y: 0.48, rFactor: 0.06 },  // body center ~0.50, heart at ~0.44
     fox:     { x: 0.34, y: 0.46, rFactor: 0.07 },  // body center ~0.40, heart at ~0.34
+    beaver:  { x: 0.32, y: 0.56, rFactor: 0.09 },  // faces LEFT, stout chest behind foreleg
+    muskrat: { x: 0.30, y: 0.56, rFactor: 0.09 },  // faces LEFT, compact rodent thorax
+    mink:    { x: 0.28, y: 0.54, rFactor: 0.08 },  // faces LEFT, low mustelid thorax
     generic: { x: 0.44, y: 0.48, rFactor: 0.07 }
   };
 
   const aspects = {
     deer: 1.30, bovine: 1.35, camelid: 0.85, equine: 1.10,
     boar: 1.30, rabbit: 0.75, bird: 1.18, goat: 1.15,
-    fox: 1.50, generic: 1.30
+    fox: 1.50, beaver: 1.65, muskrat: 1.70, mink: 1.90, generic: 1.30
   };
 
   // ── Image system ──
@@ -209,6 +212,41 @@ const Silhouettes = (() => {
       [0.30,0.52],[0.26,0.50],
       [0.22,0.60],[0.21,0.76],[0.22,0.93],[0.19,0.93],
       [0.14,0.68],[0.09,0.52],[0.04,0.46]
+    ],
+    beaver: [
+      // Stout beaver facing LEFT with broad flat paddle tail to the right
+      [0.04,0.56],[0.02,0.48],[0.05,0.40],[0.10,0.35],[0.14,0.34],
+      [0.15,0.29],[0.17,0.29],[0.18,0.34],
+      [0.26,0.28],[0.38,0.22],[0.52,0.24],[0.64,0.34],[0.71,0.48],
+      // Broad flat paddle tail
+      [0.82,0.49],[0.94,0.54],[0.99,0.61],[0.97,0.68],[0.88,0.72],[0.74,0.68],[0.67,0.64],
+      // Hind foot & belly
+      [0.64,0.78],[0.66,0.88],[0.56,0.88],[0.54,0.76],
+      [0.42,0.75],[0.28,0.74],
+      // Front foot & chin
+      [0.24,0.86],[0.18,0.86],[0.19,0.72],[0.11,0.65],[0.05,0.60]
+    ],
+    muskrat: [
+      // Compact semi-aquatic muskrat facing LEFT with slender curved scaly tail
+      [0.05,0.56],[0.03,0.49],[0.07,0.41],[0.13,0.36],[0.16,0.32],[0.18,0.35],
+      [0.28,0.27],[0.42,0.24],[0.55,0.29],[0.64,0.42],[0.68,0.56],
+      // Long slender tail
+      [0.78,0.60],[0.90,0.64],[0.98,0.68],[0.96,0.72],[0.86,0.70],[0.75,0.66],[0.66,0.63],
+      // Hind leg & belly
+      [0.62,0.78],[0.64,0.86],[0.55,0.86],[0.53,0.74],
+      [0.38,0.74],[0.25,0.72],
+      [0.22,0.84],[0.17,0.84],[0.18,0.70],[0.10,0.63]
+    ],
+    mink: [
+      // Sleek arched mustelid facing LEFT with bushy tail
+      [0.02,0.52],[0.00,0.46],[0.04,0.40],[0.10,0.37],[0.13,0.34],[0.15,0.37],
+      [0.24,0.34],[0.38,0.26],[0.52,0.26],[0.64,0.34],[0.72,0.46],
+      // Bushy mustelid tail
+      [0.84,0.48],[0.96,0.54],[0.99,0.60],[0.94,0.65],[0.82,0.63],[0.70,0.58],
+      // Short legs & arched belly
+      [0.67,0.78],[0.69,0.86],[0.63,0.86],[0.60,0.70],
+      [0.48,0.56],[0.34,0.58],[0.24,0.66],
+      [0.21,0.84],[0.16,0.84],[0.16,0.68],[0.08,0.58]
     ]
   };
   _poly.generic = _poly.deer;
