@@ -25,25 +25,20 @@ const noopCtx = new Proxy({}, {
 });
 
 (async () => {
-  // Minimal static server so jsdom has a real http origin (localStorage needs one)
-  const http = require('http');
-  const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png' };
-  const server = http.createServer((req, res) => {
-    const f = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]).replace(/^\/$/, '/index.html'));
-    if (!f.startsWith(ROOT) || !fs.existsSync(f)) { res.writeHead(404); return res.end(); }
-    res.writeHead(200, { 'Content-Type': mime[path.extname(f)] || 'application/octet-stream' });
-    fs.createReadStream(f).pipe(res);
-  });
-  await new Promise(r => server.listen(0, '127.0.0.1', r));
-  const base = `http://127.0.0.1:${server.address().port}/`;
-
+  const base = 'http://127.0.0.1/';
   const errors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', e => errors.push(e.message));
   vc.on('error', e => errors.push(String(e)));
 
-  const dom = await JSDOM.fromURL(base, {
-    runScripts: 'dangerously', resources: 'usable',
+  const indexHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')
+    .replace(/<script\s+src="([^"]+)"><\/script>/g, (_, s) => {
+      const code = fs.readFileSync(path.join(ROOT, s.split('?')[0]), 'utf8');
+      return '<script>' + code.replace(/<\/script>/gi, '<\\/script>') + '</script>';
+    });
+  const dom = new JSDOM(indexHtml, {
+    url: base, contentType: 'text/html',
+    runScripts: 'dangerously',
     pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
       w.HTMLCanvasElement.prototype.getContext = () => noopCtx;
@@ -165,16 +160,79 @@ const noopCtx = new Proxy({}, {
   ok($('gameAnimalSelect').value === 'tortola' && $('mpbrModal').style.display === 'flex', `selectAnimalFromCartilla('tortola') loads Tórtola into MPBR and opens MPBR modal`);
 
   console.log('\nHunting Season Date Detection (In-Season vs Out-of-Season)');
-  ev(`window.__ballisticTestDate = '2026-11-01T12:00:00'; onGameAnimalChange(); updateReticleView(); renderHuntingLawCartilla();`);
+  const RealDate = w.Date;
+  const mockDate = iso => {
+    const fixed = new RealDate(iso).getTime();
+    w.Date = class extends RealDate {
+      constructor(...a) { super(...(a.length ? a : [fixed])); }
+      static now() { return fixed; }
+    };
+  };
+  mockDate('2026-11-01T12:00:00');
+  ev(`onGameAnimalChange(); updateReticleView(); renderHuntingLawCartilla();`);
   ok($('gameAnimalSeasonBanner').textContent.includes('FUERA DE TEMPORADA') && $('ballisticAlerts').textContent.includes('FUERA DE TEMPORADA') && $('firingSolution').textContent.includes('FUERA DE TEMPORADA'), 'Tórtola in November triggers ⛔ FUERA DE TEMPORADA warning in MPBR modal, main alerts bar, and Reticle firing solution');
   ev(`document.getElementById('hlSearchInput').value = ''; document.getElementById('hlStatusSelect').value = 'open_now'; renderHuntingLawCartilla();`);
   const novOpenCount = $('huntingLawList').querySelectorAll('.hl-species-card').length;
-  ev(`window.__ballisticTestDate = '2026-06-15T12:00:00'; onGameAnimalChange(); renderHuntingLawCartilla();`);
+  mockDate('2026-06-15T12:00:00');
+  ev(`onGameAnimalChange(); renderHuntingLawCartilla();`);
   const junOpenCount = $('huntingLawList').querySelectorAll('.hl-species-card').length;
   ok($('gameAnimalSeasonBanner').textContent.includes('EN TEMPORADA') && novOpenCount === 19 && junOpenCount === 45, `Season calendar accurately distinguishes November (${novOpenCount} open) vs June (${junOpenCount} open, Tórtola EN TEMPORADA)`);
-  ev(`delete window.__ballisticTestDate;`);
+  w.Date = RealDate;
+
+  console.log('\n22 Species Silhouettes Integration');
+  ok(ev('Silhouettes.TYPES.length') === 22, 'Silhouettes.TYPES registers all 22 target silhouettes');
+  ev(`document.getElementById('hlStatusSelect').value = 'all'; document.getElementById('hlZoneSelect').value = 'all'; renderHuntingLawCartilla();`);
+  const speciesTypeMap = {
+    canquen: 'goose', caiquen: 'goose', tagua: 'coot', tagua_chica: 'coot',
+    yeco: 'cormorant', codorniz: 'quail', perdiz_chilena: 'partridge',
+    faisan: 'pheasant', pavo_salvaje: 'pheasant', traro: 'raptor',
+    cotorra: 'parrot', zorzal: 'songbird', vison: 'mink',
+    castor: 'beaver', rata_almizclera: 'muskrat'
+  };
+  const allMappedOk = Object.entries(speciesTypeMap).every(([id, want]) => {
+    const a = ev(`appState.gameAnimalsDB.find(x => x.id === '${id}')`);
+    if (!a || a.silhouetteType !== want) return false;
+    if (a.region !== 'CL') return true;
+    const btn = w.document.querySelector(`[data-select-animal="${id}"]`);
+    const card = btn ? btn.closest('.hl-species-card') : null;
+    const imgHref = card && card.querySelector('svg image') ? (card.querySelector('svg image').getAttribute('href') || '') : '';
+    return imgHref.includes(`img/silhouettes/${want}.png`);
+  });
+  ok(allMappedOk, 'Canquén & Caiquén use goose.png (not duck.png) and all new species render their dedicated PNG silhouette');
+
+  console.log('\nSecurity Hardening (CSP, zero inline JS, XSS & DB sanitization)');
+  const rawHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const rawCss = fs.readFileSync(path.join(ROOT, 'css/main.css'), 'utf8');
+  const rawApp = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  const cspMeta = w.document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+  ok(cspMeta && /script-src 'self'/.test(cspMeta.content) && /font-src 'self'/.test(cspMeta.content) && /object-src 'none'/.test(cspMeta.content), 'strict Content-Security-Policy meta tag present');
+  ok(!/\bon[a-z]+\s*=/i.test(rawHtml) && w.document.querySelectorAll('[onclick],[onchange],[oninput]').length === 0, 'zero inline event handler attributes in index.html and live DOM');
+  ok(!/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(rawCss) && /fonts\/inter-latin\.woff2/.test(rawCss), '100% local WOFF2 fonts (zero external Google Fonts leakage)');
+  ok(!/__ballisticTestDate/.test(rawApp), 'production app.js contains zero __ballisticTestDate global test hooks');
+
+  // Delegated DOPE delete with crafted ID must not execute JS
+  ev(`DOPE.clearAll(); localStorage.setItem('ballisticpro_dope', JSON.stringify([{id: "'); alert('xss'); //", timestamp: 1, date: '2026-01-01', weapon: 'w', ammo: 'a', scope: 's', distance: 100}])); renderDopeLog();`);
+  const delBtn = $('dopeTableBody').querySelector('[data-delete-dope]');
+  ok(!!delBtn, 'crafted DOPE id rendered via data-delete-dope attribute');
+  delBtn.click();
+  ok(ev('DOPE.getAll().length') === 0 && errors.length === 0, 'clicking delegated delete removes crafted DOPE entry without XSS execution');
+
+  // Remote update URL allowlist + schema sanitizer
+  ok(ev(`_isAllowedUpdateUrl('http://gjalken.github.io/a.json') === false && _isAllowedUpdateUrl('https://evil.example.com/a.json') === false && _isAllowedUpdateUrl('https://gjalken.github.io/ballisticpro/js/data/game-animals.json') === true`), '_isAllowedUpdateUrl enforces HTTPS and trusted GitHub origins');
+  const sanitizedCheck = ev(`(() => {
+    const rejected = _sanitizeGameAnimalsPayload({
+      meta: { lastUpdated: '2026-11' },
+      animals: [{ id: '<script>bad</script>', nameEs: 'Bad', vitalZoneCm: 10 }]
+    });
+    const clean = _sanitizeGameAnimalsPayload({
+      meta: { lastUpdated: '2026-11', updateUrl: 'http://evil.example/a.json' },
+      animals: [{ id: 'ciervo_test', nameEs: 'Ciervo Test', vitalZoneCm: 25, silhouetteType: '../../etc/passwd', status: 'javascript:alert(1)' }]
+    });
+    return rejected === null && clean && clean.animals.length === 1 && clean.animals[0].silhouetteType === 'generic' && clean.animals[0].status === 'regulada' && !clean.meta.updateUrl;
+  })()`);
+  ok(sanitizedCheck, '_sanitizeGameAnimalsPayload rejects poisoned IDs and neutralizes untrusted silhouetteType / status / updateUrl');
 
   console.log(`\n${passed} passed, ${failed} failed`);
-  w.close(); server.close();
+  w.close();
   process.exit(failed ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(2); });

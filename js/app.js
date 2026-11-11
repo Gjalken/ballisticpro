@@ -71,16 +71,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
         const cached = localStorage.getItem('gameAnimalsDB');
         if (cached) {
-          const cachedData = JSON.parse(cached);
-          // Validate structure: must have regulations array format, not old season/dailyQuota
-          const firstAnimal = cachedData.animals && cachedData.animals[0];
-          if (firstAnimal && firstAnimal.season && !firstAnimal.regulations) {
-            // Old format — clear it
+          const sanitized = _sanitizeGameAnimalsPayload(JSON.parse(cached));
+          if (!sanitized) {
             localStorage.removeItem('gameAnimalsDB');
-            console.log('Cleared outdated game animals cache');
-          } else if (cachedData.meta && cachedData.meta.lastUpdated > gData.meta.lastUpdated) {
-            bundled = cachedData;
-            console.log('Using cached game animals DB:', cachedData.meta.lastUpdated);
+          } else if (sanitized.meta.lastUpdated > gData.meta.lastUpdated) {
+            bundled = sanitized;
+            console.log('Using cached game animals DB:', sanitized.meta.lastUpdated);
+          } else {
+            // Bundled DB is equal or newer — clear stale cache so updated silhouettes/rules apply
+            localStorage.removeItem('gameAnimalsDB');
           }
         }
       } catch (e) { localStorage.removeItem('gameAnimalsDB'); }
@@ -118,6 +117,80 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btnTruing').addEventListener('click', openTruing);
   const btnHL = document.getElementById('btnHuntingLaw');
   if (btnHL) btnHL.addEventListener('click', openHuntingLaw);
+
+  // Sidebar collapsible panel headers (CSP-safe: zero inline onclick)
+  document.querySelectorAll('.panel > .panel-header').forEach(hdr => {
+    hdr.addEventListener('click', () => {
+      const panel = hdr.closest('.panel');
+      if (panel && panel.id) togglePanel(panel.id);
+    });
+  });
+
+  // Presets, weapon, optics, projectile, position, wind & calculate controls
+  const bind = (id, evName, fn) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(evName, fn);
+  };
+  bind('presetSelect', 'change', onPresetLoad);
+  bind('btnPresetSave', 'click', onPresetSave);
+  bind('btnPresetDelete', 'click', onPresetDelete);
+  bind('weaponType', 'change', onWeaponTypeChange);
+  bind('caliberSelect', 'change', onWeaponSelect);
+  bind('scopeSelect', 'change', onScopeSelect);
+  bind('reticleType', 'change', onReticleChange);
+  bind('projSelect', 'change', onProjectileSelect);
+  bind('btnLatHemi', 'click', toggleLatSign);
+  bind('windClock', 'change', onWindClockChange);
+  bind('btnCalculate', 'click', calculate);
+
+  // Results tabs & Hunting Law tab shortcut
+  document.querySelectorAll('.results-tabs .tab-btn[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab, btn));
+  });
+  bind('btnTabHuntingLaw', 'click', openHuntingLaw);
+
+  // DOPE actions & delegated delete button handler
+  bind('btnDopeAdd', 'click', toggleDopeForm);
+  bind('btnDopeExport', 'click', exportDOPE);
+  bind('btnDopeClear', 'click', clearDOPE);
+  bind('btnDopeAutoFill', 'click', autoFillDope);
+  bind('btnDopeSave', 'click', saveDope);
+  const dopeBody = document.getElementById('dopeTableBody');
+  if (dopeBody) {
+    dopeBody.addEventListener('click', e => {
+      const btn = e.target.closest('[data-delete-dope]');
+      if (btn) deleteDope(btn.dataset.deleteDope);
+    });
+  }
+
+  // Truing modal controls
+  bind('btnCloseTruing', 'click', closeTruing);
+  bind('btnRunTruingMV', 'click', runTruingMV);
+  bind('btnApplyMV', 'click', applyTruingMV);
+  bind('btnRunTruingBC', 'click', runTruingBC);
+  bind('btnApplyBC', 'click', applyTruingBC);
+
+  // MPBR modal controls
+  bind('btnCloseMPBR', 'click', closeMPBR);
+  bind('gameAnimalSelect', 'change', onGameAnimalChange);
+  bind('btnOpenCartillaFromMPBR', 'click', openHuntingLaw);
+  bind('btnUpdateDB', 'click', updateGameAnimalsDB);
+  bind('btnCalcMPBR', 'click', calculateMPBR);
+  bind('btnApplyMPBRZero', 'click', applyMPBRZero);
+
+  // Hunting Law Cartilla modal controls & delegated species selector
+  bind('btnCloseHuntingLaw', 'click', closeHuntingLaw);
+  bind('hlZoneSelect', 'change', renderHuntingLawCartilla);
+  bind('hlCatSelect', 'change', renderHuntingLawCartilla);
+  bind('hlStatusSelect', 'change', renderHuntingLawCartilla);
+  bind('hlSearchInput', 'input', renderHuntingLawCartilla);
+  const hlList = document.getElementById('huntingLawList');
+  if (hlList) {
+    hlList.addEventListener('click', e => {
+      const btn = e.target.closest('[data-select-animal]');
+      if (btn) selectAnimalFromCartilla(btn.dataset.selectAnimal);
+    });
+  }
 
   // Reticle view controls
   document.getElementById('reticleMagSlider').addEventListener('input', (e) => {
@@ -592,11 +665,11 @@ function gatherInputs() {
   const windDir = num('windDir', 0);
   const latDeg = num('latitude', 0);
   const azDeg = num('azimuth', 0);
-  const lookAngleDeg = num('lookAngle', 0);
+  const lookAngleDeg = Math.min(Math.max(num('lookAngle', 0), -85), 85);
   const rawMax = field('maxRange', 1093.61, true);
-  const maxRangeM = m ? rawMax : rawMax * 0.9144;
+  const maxRangeM = Math.min(Math.max(m ? rawMax : rawMax * 0.9144, 10), 5000);
   const rawStep = field('rangeStep', 27.34, true);
-  const stepM = m ? rawStep : rawStep * 0.9144;
+  const stepM = Math.min(Math.max(m ? rawStep : rawStep * 0.9144, Math.max(0.5, maxRangeM / 2000)), maxRangeM);
   return {
     muzzleVelMps, massKg: massGrains / 15432.4,
     diameterM: diamIn * 0.0254, bc, dragModel,
@@ -1462,7 +1535,7 @@ function renderDopeLog() {
       <td>${e.groupSize > 0 ? e.groupSize.toFixed(1) + ' MOA' : '—'}</td>
       <td><span class="poi-badge ${poiClass}">${poiEmoji[e.poiResult] || '?'}</span></td>
       <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${esc(e.notes)}</td>
-      <td><button class="dope-delete" onclick="deleteDope('${esc(e.id)}')" title="${I18n.t('deleteEntry')}">✕</button></td>
+      <td><button type="button" class="dope-delete" data-delete-dope="${esc(e.id)}" title="${esc(I18n.t('deleteEntry'))}">✕</button></td>
     </tr>`;
   }).join('');
 }
@@ -1551,21 +1624,30 @@ function _getAnimalEmoji(a) {
   if (exact[id]) return exact[id];
   const byType = {
     deer: '🦌', bovine: '🐂', camelid: '🦙', equine: '🫏',
-    boar: '🐗', rabbit: '🐇', bird: '🐦', duck: '🦆', goat: '🐐',
-    fox: '🦊', beaver: '🦫', muskrat: '🐀'
+    boar: '🐗', rabbit: '🐇', bird: '🕊️', duck: '🦆',
+    goose: '🪿', coot: '🦆', cormorant: '🐦‍⬛', quail: '🐦',
+    partridge: '🐦', pheasant: '🦃', raptor: '🦅', parrot: '🦜',
+    songbird: '🐤', goat: '🐐', fox: '🦊', beaver: '🦫',
+    muskrat: '🐀', mink: '🦦'
   };
   return byType[a.silhouetteType] || '🦌';
 }
 
+const VALID_SILHOUETTE_TYPES = new Set([
+  'deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit',
+  'bird', 'duck', 'goose', 'coot', 'cormorant', 'quail',
+  'partridge', 'pheasant', 'raptor', 'parrot', 'songbird',
+  'goat', 'fox', 'beaver', 'muskrat', 'mink'
+]);
+
 function _getSpeciesBadgeSVG(animal, accentColor) {
-  const col = accentColor || '#f59e0b';
-  const validTypes = new Set(['deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit', 'bird', 'duck', 'goat', 'fox', 'beaver', 'muskrat']);
-  const silType = (animal && validTypes.has(animal.silhouetteType)) ? animal.silhouetteType : 'deer';
+  const col = (typeof accentColor === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(accentColor)) ? accentColor : '#f59e0b';
+  const silType = (animal && VALID_SILHOUETTE_TYPES.has(animal.silhouetteType)) ? animal.silhouetteType : 'deer';
   const vz = (typeof Silhouettes !== 'undefined' && Silhouettes.vitalZones && Silhouettes.vitalZones[silType])
     ? Silhouettes.vitalZones[silType]
     : { x: 0.47, y: 0.50 };
 
-  // bird.png is 512x433 (aspect 1.1824); all other 11 PNGs in img/silhouettes/ are 512x512 (aspect 1.0)
+  // bird.png is 512x433 (aspect 1.1824); all other 21 PNGs in img/silhouettes/ are 512x512 (aspect 1.0)
   const aspect = silType === 'bird' ? (512 / 433) : 1.0;
   const box = 56;
   const imgW = box;
@@ -1932,7 +2014,74 @@ function updateEthicalRange(mpbrResult) {
   }
 }
 
-// ─── Game Animals DB Updater ───
+// ─── Game Animals DB Security Validator & Updater ───
+function _isAllowedUpdateUrl(urlStr) {
+  if (!urlStr || typeof urlStr !== 'string') return false;
+  try {
+    const u = new URL(urlStr, window.location.origin);
+    if (u.origin === window.location.origin) return true;
+    if (u.protocol !== 'https:') return false;
+    const host = u.hostname.toLowerCase();
+    return host === 'raw.githubusercontent.com' || host.endsWith('.github.io');
+  } catch (e) {
+    return false;
+  }
+}
+
+function _sanitizeGameAnimalsPayload(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+  if (!data.meta || typeof data.meta !== 'object' || !Array.isArray(data.animals)) return null;
+  if (data.animals.length < 1 || data.animals.length > 500) return null;
+  const lastUpdated = String(data.meta.lastUpdated || '');
+  if (!/^\d{4}-\d{2}(-\d{2})?$/.test(lastUpdated)) return null;
+
+  const cleanAnimals = [];
+  for (const a of data.animals) {
+    if (!a || typeof a !== 'object') return null;
+    if (typeof a.id !== 'string' || !/^[a-zA-Z0-9_]{1,64}$/.test(a.id)) return null;
+    // Reject legacy flat schema lacking regulations on CL entries
+    if (a.season && !a.regulations) return null;
+
+    const regs = Array.isArray(a.regulations)
+      ? a.regulations.slice(0, 20).filter(r => r && typeof r === 'object').map(r => ({
+          zone: String(r.zone || '').slice(0, 120),
+          season: String(r.season || '—').slice(0, 80),
+          quota: typeof r.quota === 'number' && Number.isFinite(r.quota)
+            ? Math.max(0, Math.min(r.quota, 10000))
+            : String(r.quota ?? '—').slice(0, 60),
+          ...(r.notes ? { notes: String(r.notes).slice(0, 240) } : {})
+        }))
+      : undefined;
+
+    cleanAnimals.push({
+      id: a.id,
+      nameEs: String(a.nameEs || a.id).slice(0, 100),
+      nameEn: String(a.nameEn || a.nameEs || a.id).slice(0, 100),
+      scientificName: String(a.scientificName || '').slice(0, 120),
+      category: a.category === 'mayor' ? 'mayor' : 'menor',
+      region: ['CL', 'AR', 'INT'].includes(a.region) ? a.region : 'INT',
+      status: ['regulada', 'dañina', 'especial'].includes(a.status) ? a.status : 'regulada',
+      vitalZoneCm: Math.min(Math.max(Number(a.vitalZoneCm) || 5, 0.5), 100),
+      minEnergyFPE: Math.min(Math.max(Number(a.minEnergyFPE) || 1, 0.5), 10000),
+      weightKg: Math.min(Math.max(Number(a.weightKg) || 1, 0.005), 2000),
+      bodyHeightCm: Math.min(Math.max(Number(a.bodyHeightCm) || 20, 3), 300),
+      silhouetteType: VALID_SILHOUETTE_TYPES.has(a.silhouetteType) ? a.silhouetteType : 'generic',
+      ...(regs ? { regulations: regs } : {})
+    });
+  }
+
+  const cleanMeta = {
+    lastUpdated,
+    dataYear: Number(data.meta.dataYear) || new Date().getFullYear(),
+    warning_es: String(data.meta.warning_es || '').slice(0, 400),
+    warning_en: String(data.meta.warning_en || '').slice(0, 400),
+    ...(typeof data.meta.updateUrl === 'string' && _isAllowedUpdateUrl(data.meta.updateUrl)
+      ? { updateUrl: data.meta.updateUrl }
+      : {})
+  };
+  return { meta: cleanMeta, animals: cleanAnimals };
+}
+
 async function updateGameAnimalsDB() {
   const btn = document.getElementById('btnUpdateDB');
   const lang = appState.lang || 'es';
@@ -1940,31 +2089,53 @@ async function updateGameAnimalsDB() {
 
   // Get update URL from meta, localStorage, or prompt
   let updateUrl = '';
-  if (appState.gameAnimalsDBMeta && appState.gameAnimalsDBMeta.updateUrl) {
+  if (appState.gameAnimalsDBMeta && _isAllowedUpdateUrl(appState.gameAnimalsDBMeta.updateUrl)) {
     updateUrl = appState.gameAnimalsDBMeta.updateUrl;
   }
   if (!updateUrl) {
-    updateUrl = localStorage.getItem('gameAnimalsUpdateUrl') || '';
+    const storedUrl = localStorage.getItem('gameAnimalsUpdateUrl') || '';
+    if (_isAllowedUpdateUrl(storedUrl)) updateUrl = storedUrl;
+    else if (storedUrl) localStorage.removeItem('gameAnimalsUpdateUrl');
   }
+  let fromPrompt = false;
   if (!updateUrl) {
     const msg = lang === 'es'
-      ? 'Ingrese la URL del archivo game-animals.json actualizado.\n\nEjemplo: https://usuario.github.io/repo/game-animals.json'
-      : 'Enter the URL of the updated game-animals.json file.\n\nExample: https://user.github.io/repo/game-animals.json';
-    updateUrl = prompt(msg);
+      ? 'Ingrese la URL HTTPS oficial (github.io / raw.githubusercontent.com) del archivo game-animals.json:\n\nEjemplo: https://usuario.github.io/repo/game-animals.json'
+      : 'Enter the official HTTPS URL (github.io / raw.githubusercontent.com) of game-animals.json:\n\nExample: https://user.github.io/repo/game-animals.json';
+    updateUrl = (prompt(msg) || '').trim();
     if (!updateUrl) return;
-    localStorage.setItem('gameAnimalsUpdateUrl', updateUrl);
+    fromPrompt = true;
+  }
+
+  if (!_isAllowedUpdateUrl(updateUrl)) {
+    alert(lang === 'es'
+      ? 'URL bloqueada por seguridad: solo se permiten orígenes HTTPS confiables (*.github.io o raw.githubusercontent.com).'
+      : 'URL blocked for security: only trusted HTTPS origins (*.github.io or raw.githubusercontent.com) are allowed.');
+    return;
   }
 
   btn.textContent = '⏳ ...';
   btn.disabled = true;
 
-  try {
-    const res = await fetch(updateUrl, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
 
-    if (!data.animals || !data.meta) {
+  try {
+    const res = await fetch(updateUrl, {
+      cache: 'no-store',
+      credentials: 'omit',
+      ...(ctrl ? { signal: ctrl.signal } : {})
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rawData = await res.json();
+    const data = _sanitizeGameAnimalsPayload(rawData);
+
+    if (!data) {
       throw new Error(lang === 'es' ? 'Formato inválido' : 'Invalid format');
+    }
+
+    if (fromPrompt) {
+      localStorage.setItem('gameAnimalsUpdateUrl', updateUrl);
     }
 
     const currentDate = appState.gameAnimalsDBMeta ? appState.gameAnimalsDBMeta.lastUpdated : '0';
@@ -1976,7 +2147,7 @@ async function updateGameAnimalsDB() {
       return;
     }
 
-    // Save to localStorage and update appState
+    // Save validated payload to localStorage and update appState
     localStorage.setItem('gameAnimalsDB', JSON.stringify(data));
     appState.gameAnimalsDB = data.animals;
     appState.gameAnimalsDBMeta = data.meta;
@@ -2004,6 +2175,8 @@ async function updateGameAnimalsDB() {
     btn.textContent = '❌ ' + e.message;
     btn.style.color = '#ef4444';
     setTimeout(() => { btn.textContent = originalText; btn.style.color = ''; btn.disabled = false; }, 3000);
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 
@@ -2056,7 +2229,7 @@ function _parseSeasonDateRange(seasonStr) {
 }
 
 function _evalRegulationSeason(reg, refDate) {
-  const now = refDate || (window.__ballisticTestDate ? new Date(window.__ballisticTestDate) : new Date());
+  const now = refDate instanceof Date ? refDate : new Date();
   if (!reg || reg.season === 'PROTEGIDA') {
     return { state: 'protected', inSeason: false };
   }
@@ -2084,7 +2257,7 @@ function _evalRegulationSeason(reg, refDate) {
 }
 
 function _evalAnimalSeasonStatus(animal, zoneFilter, refDate) {
-  const now = refDate || (window.__ballisticTestDate ? new Date(window.__ballisticTestDate) : new Date());
+  const now = refDate instanceof Date ? refDate : new Date();
   const lang = appState.lang || 'es';
   const mNames = lang === 'es' ? _MONTH_NAMES_ES : _MONTH_NAMES_EN;
   const todayStr = `${now.getDate()} ${mNames[now.getMonth()]}`;
@@ -2323,7 +2496,7 @@ function renderHuntingLawCartilla() {
             </div>
           </div>
         </div>
-        <button type="button" onclick="selectAnimalFromCartilla('${esc(a.id)}')" style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;border-radius:6px;padding:4px 9px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap">${esc(I18n.t('hlUseInMPBR'))}</button>
+        <button type="button" data-select-animal="${esc(a.id)}" style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;border-radius:6px;padding:4px 9px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap">${esc(I18n.t('hlUseInMPBR'))}</button>
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
         <thead>

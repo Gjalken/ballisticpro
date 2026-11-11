@@ -11,31 +11,49 @@ const Silhouettes = (() => {
   // Calibrated by: body center → offset 30-40% toward front for heart/lungs
   // Note: bovine, boar & bird face RIGHT; all others face LEFT
   const vitalZones = {
-    deer:    { x: 0.47, y: 0.53, rFactor: 0.06 },  // front leg ~0.36, heart behind at ~0.47
-    bovine:  { x: 0.58, y: 0.48, rFactor: 0.07 },  // faces RIGHT, front leg ~0.62, heart behind at ~0.58
-    camelid: { x: 0.48, y: 0.52, rFactor: 0.05 },  // body center ~0.52, heart at ~0.48
-    equine:  { x: 0.47, y: 0.47, rFactor: 0.06 },  // user-confirmed ✓
-    boar:    { x: 0.55, y: 0.42, rFactor: 0.07 },  // faces RIGHT, front leg ~0.58, heart behind at ~0.55
-    rabbit:  { x: 0.42, y: 0.52, rFactor: 0.08 },  // sitting, body center ~0.45
-    bird:    { x: 0.78, y: 0.47, rFactor: 0.09 },  // faces RIGHT (dove), chest center
-    duck:    { x: 0.40, y: 0.49, rFactor: 0.08 },  // faces LEFT (mallard), breast/thorax center
-    goat:    { x: 0.44, y: 0.48, rFactor: 0.06 },  // body center ~0.50, heart at ~0.44
-    fox:     { x: 0.34, y: 0.46, rFactor: 0.07 },  // body center ~0.40, heart at ~0.34
-    beaver:  { x: 0.30, y: 0.50, rFactor: 0.07 },  // faces LEFT, stout chest behind foreleg
-    muskrat: { x: 0.31, y: 0.50, rFactor: 0.07 },  // faces LEFT, compact rodent thorax
-    generic: { x: 0.44, y: 0.48, rFactor: 0.07 }
+    deer:      { x: 0.47, y: 0.53, rFactor: 0.06 },  // front leg ~0.36, heart behind at ~0.47
+    bovine:    { x: 0.58, y: 0.48, rFactor: 0.07 },  // faces RIGHT, front leg ~0.62, heart behind at ~0.58
+    camelid:   { x: 0.48, y: 0.52, rFactor: 0.05 },  // body center ~0.52, heart at ~0.48
+    equine:    { x: 0.47, y: 0.47, rFactor: 0.06 },  // user-confirmed ✓
+    boar:      { x: 0.55, y: 0.42, rFactor: 0.07 },  // faces RIGHT, front leg ~0.58, heart behind at ~0.55
+    rabbit:    { x: 0.42, y: 0.52, rFactor: 0.08 },  // sitting, body center ~0.45
+    bird:      { x: 0.78, y: 0.47, rFactor: 0.09 },  // faces RIGHT (dove/pigeon), chest center
+    duck:      { x: 0.40, y: 0.49, rFactor: 0.08 },  // faces LEFT (dabbling duck), breast/thorax
+    goose:     { x: 0.41, y: 0.52, rFactor: 0.08 },  // faces LEFT (Chloephaga upland goose), breast/thorax
+    coot:      { x: 0.42, y: 0.50, rFactor: 0.08 },  // faces LEFT (Fulica coot), thorax center
+    cormorant: { x: 0.53, y: 0.49, rFactor: 0.07 },  // faces RIGHT (Phalacrocorax yeco), upper chest
+    quail:     { x: 0.40, y: 0.50, rFactor: 0.08 },  // faces LEFT (California quail), breast/thorax
+    partridge: { x: 0.40, y: 0.49, rFactor: 0.08 },  // faces LEFT (Chilean tinamou), plump thorax
+    pheasant:  { x: 0.24, y: 0.52, rFactor: 0.07 },  // faces LEFT (long tail on right), chest center
+    raptor:    { x: 0.41, y: 0.45, rFactor: 0.07 },  // faces LEFT (Southern caracara / traro), thorax
+    parrot:    { x: 0.37, y: 0.36, rFactor: 0.07 },  // faces LEFT (Monk parakeet), perched upper chest
+    songbird:  { x: 0.37, y: 0.47, rFactor: 0.08 },  // faces LEFT (Austral thrush / passerine), thorax
+    goat:      { x: 0.44, y: 0.48, rFactor: 0.06 },  // body center ~0.50, heart at ~0.44
+    fox:       { x: 0.34, y: 0.46, rFactor: 0.07 },  // body center ~0.40, heart at ~0.34
+    beaver:    { x: 0.30, y: 0.50, rFactor: 0.07 },  // faces LEFT, stout chest behind foreleg
+    muskrat:   { x: 0.31, y: 0.50, rFactor: 0.07 },  // faces LEFT, compact rodent thorax
+    mink:      { x: 0.30, y: 0.51, rFactor: 0.06 },  // faces LEFT (American mink), chest behind foreleg
+    generic:   { x: 0.44, y: 0.48, rFactor: 0.07 }
   };
 
   const aspects = {
     deer: 1.30, bovine: 1.35, camelid: 0.85, equine: 1.10,
-    boar: 1.30, rabbit: 0.75, bird: 1.18, duck: 1.00, goat: 1.15,
-    fox: 1.50, beaver: 1.00, muskrat: 1.00, generic: 1.30
+    boar: 1.30, rabbit: 0.75, bird: 1.18, duck: 1.00,
+    goose: 1.00, coot: 1.00, cormorant: 1.00, quail: 1.00,
+    partridge: 1.00, pheasant: 1.00, raptor: 1.00, parrot: 1.00,
+    songbird: 1.00, goat: 1.15, fox: 1.50, beaver: 1.00,
+    muskrat: 1.00, mink: 1.00, generic: 1.30
   };
 
   // ── Image system ──
   const images = {};
   const tintedCache = {};
-  const TYPES = ['deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit', 'bird', 'duck', 'goat', 'fox', 'beaver', 'muskrat'];
+  const TYPES = [
+    'deer', 'bovine', 'camelid', 'equine', 'boar', 'rabbit',
+    'bird', 'duck', 'goose', 'coot', 'cormorant', 'quail',
+    'partridge', 'pheasant', 'raptor', 'parrot', 'songbird',
+    'goat', 'fox', 'beaver', 'muskrat', 'mink'
+  ];
   let _onReadyCallback = null;
   let _imagesAvailable = false;
 
@@ -249,6 +267,35 @@ const Silhouettes = (() => {
       [0.21,0.84],[0.16,0.84],[0.16,0.68],[0.08,0.58]
     ]
   };
+  _poly.duck = [
+    [0.14,0.25],[0.24,0.20],[0.30,0.24],[0.29,0.38],[0.45,0.40],[0.68,0.46],[0.86,0.52],
+    [0.74,0.62],[0.55,0.66],[0.50,0.82],[0.42,0.82],[0.44,0.66],[0.26,0.60],[0.22,0.44],[0.22,0.29]
+  ];
+  _poly.goose = [
+    [0.16,0.18],[0.28,0.09],[0.36,0.16],[0.36,0.36],[0.56,0.42],[0.78,0.58],[0.84,0.68],
+    [0.64,0.67],[0.56,0.88],[0.45,0.88],[0.45,0.68],[0.26,0.56],[0.24,0.38],[0.28,0.22]
+  ];
+  _poly.coot = _poly.duck;
+  _poly.cormorant = [
+    [0.84,0.10],[0.64,0.08],[0.58,0.20],[0.62,0.32],[0.46,0.46],[0.32,0.72],[0.18,0.92],
+    [0.34,0.80],[0.48,0.76],[0.52,0.88],[0.64,0.88],[0.56,0.72],[0.70,0.46],[0.72,0.28],[0.68,0.18]
+  ];
+  _poly.quail = [
+    [0.14,0.22],[0.26,0.18],[0.38,0.30],[0.62,0.42],[0.88,0.68],[0.66,0.64],[0.54,0.82],[0.42,0.82],[0.44,0.64],[0.24,0.52],[0.22,0.32]
+  ];
+  _poly.partridge = _poly.quail;
+  _poly.pheasant = [
+    [0.10,0.26],[0.20,0.22],[0.24,0.36],[0.48,0.48],[0.92,0.42],[0.56,0.58],[0.36,0.64],[0.34,0.78],[0.24,0.78],[0.26,0.64],[0.14,0.50],[0.14,0.34]
+  ];
+  _poly.raptor = [
+    [0.26,0.18],[0.42,0.12],[0.48,0.26],[0.66,0.48],[0.82,0.76],[0.60,0.64],[0.52,0.86],[0.42,0.86],[0.46,0.64],[0.34,0.42],[0.34,0.24]
+  ];
+  _poly.parrot = [
+    [0.18,0.22],[0.30,0.10],[0.46,0.22],[0.68,0.54],[0.88,0.90],[0.58,0.60],[0.42,0.68],[0.38,0.60],[0.28,0.38]
+  ];
+  _poly.songbird = [
+    [0.14,0.20],[0.32,0.16],[0.44,0.30],[0.68,0.54],[0.90,0.72],[0.64,0.62],[0.48,0.82],[0.38,0.82],[0.44,0.62],[0.26,0.46],[0.24,0.28]
+  ];
   _poly.generic = _poly.deer;
 
   // ── Draw functions ──
@@ -332,7 +379,7 @@ const Silhouettes = (() => {
     }
   }
 
-  return { draw, drawVitalZone, getAspect, vitalZones, aspects, preload, onReady };
+  return { TYPES, draw, drawVitalZone, getAspect, vitalZones, aspects, preload, onReady };
 })();
 
 if (typeof module !== 'undefined') module.exports = Silhouettes;

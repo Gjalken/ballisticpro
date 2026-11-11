@@ -135,6 +135,7 @@ const Solver = (() => {
         px = s[0]; py = s[1];
         stepper(s, dt);
         t += dt;
+        if (s[3] < 1) break;                  // bullet effectively stopped before zeroRange
       }
       if (s[0] > zeroRange && s[0] > px) {
         const f = (zeroRange - px) / (s[0] - px);
@@ -177,15 +178,20 @@ const Solver = (() => {
       maxRangeM, stepM, customDragTable
     } = config;
 
-    const maxRange = maxRangeM || 2000;
-    const step = stepM || 1;
-    const dt = config.integrationDt || DT;     // override hook for validation only
+    const MAX_SAMPLES = 5000;
+    const maxRange = Math.min(Math.max(Number(maxRangeM) || 2000, 1), 10000);
+    let step = Math.max(Number(stepM) || 1, 0.1);
+    if (maxRange / step > MAX_SAMPLES) step = maxRange / MAX_SAMPLES;
+    const dt = Math.min(Math.max(Number(config.integrationDt) || DT, 0.0002), 0.05);
+    const safeVel = Math.min(Math.max(Number(muzzleVelMps) || 800, 10), 3000);
+    const safeBc = Math.min(Math.max(Number(bc) || 0.25, 0.001), 10);
+    const clampedLookDeg = Math.min(Math.max(Number(lookAngleDeg) || 0, -85), 85);
 
     const rho = atmo.density;
     const a = atmo.speedOfSound;
     const latRad = (latDeg || 0) * Math.PI / 180;
     const azRad = (azimuthDeg || 0) * Math.PI / 180;
-    const theta = (lookAngleDeg || 0) * Math.PI / 180;
+    const theta = clampedLookDeg * Math.PI / 180;
     const cosT = Math.cos(theta), tanT = Math.tan(theta);
 
     const windAngleRad = ((windDirDeg || 0) - (azimuthDeg || 0)) * Math.PI / 180;
@@ -194,12 +200,12 @@ const Solver = (() => {
 
     let sg = 1.5;
     if (massGrains && bulletDiamIn && bulletLengthIn && twistInchesPerTurn) {
-      sg = Stability.millerStability(massGrains, bulletDiamIn, bulletLengthIn, twistInchesPerTurn, muzzleVelMps * 3.28084, atmo.tempC * 9 / 5 + 32, atmo.pressureHpa * 0.02953);
+      sg = Stability.millerStability(massGrains, bulletDiamIn, bulletLengthIn, twistInchesPerTurn, safeVel * 3.28084, atmo.tempC * 9 / 5 + 32, atmo.pressureHpa * 0.02953);
     }
-    const ajAngle = Stability.aerodynamicJumpRad(sg, crossWind, muzzleVelMps, twistDir || 1);
+    const ajAngle = Stability.aerodynamicJumpRad(sg, crossWind, safeVel, twistDir || 1);
 
     const cdFn = DragModels.makeCdFunction(dragModel, customDragTable);
-    const baseEnv = { rho, a, bc, hw: headWind, cw: crossWind, cdFn, cor: null };
+    const baseEnv = { rho, a, bc: safeBc, hw: headWind, cw: crossWind, cdFn, cor: null };
     const useCoriolis = Math.abs(latRad) > 0.001;
     const corEnv = useCoriolis ? Object.assign({}, baseEnv, {
       cor: { sinLat: Math.sin(latRad), cosLat: Math.cos(latRad), sinAz: Math.sin(azRad), cosAz: Math.cos(azRad) }
@@ -207,7 +213,7 @@ const Solver = (() => {
 
     const scopeH = scopeHeightM || 0.04;
     // Zero is established on LEVEL ground; the look angle only tilts the shot afterwards.
-    const zeroAngle = findZeroAngle(baseEnv, dt, muzzleVelMps, scopeH, zeroRangeM || 100);
+    const zeroAngle = findZeroAngle(baseEnv, dt, safeVel, scopeH, Math.min(Math.max(Number(zeroRangeM) || 100, 1), 5000));
     const launchAngle = zeroAngle + theta + ajAngle;
 
     // Sample abscissae: slant range along the line of sight → horizontal x
@@ -221,12 +227,12 @@ const Solver = (() => {
     let yOff = null, zOff = null;
     if (useCoriolis && !config.skipBreakdown) {
       yOff = new Float64Array(nT); zOff = new Float64Array(nT);
-      simulate(baseEnv, dt, muzzleVelMps, launchAngle, scopeH, xT, (i, o) => { yOff[i] = o[1]; zOff[i] = o[2]; });
+      simulate(baseEnv, dt, safeVel, launchAngle, scopeH, xT, (i, o) => { yOff[i] = o[1]; zOff[i] = o[2]; });
     }
 
     const results = [];
     const hasSpin = !!(twistInchesPerTurn && massGrains);
-    simulate(corEnv, dt, muzzleVelMps, launchAngle, scopeH, xT, (i, o) => {
+    simulate(corEnv, dt, safeVel, launchAngle, scopeH, xT, (i, o) => {
       const x = o[0], y = o[1], z = o[2];
       const v = Math.sqrt(o[3] * o[3] + o[4] * o[4] + o[5] * o[5]);
       const mach = v / a;

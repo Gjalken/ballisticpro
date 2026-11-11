@@ -12,12 +12,14 @@
  *
  * Bump CACHE_VERSION whenever the ASSETS list changes (old caches are deleted on activate).
  */
-const CACHE_VERSION = 'v80';
+const CACHE_VERSION = 'v81';
 const CACHE_NAME = 'ballisticpro-' + CACHE_VERSION;
 const NET_TIMEOUT_MS = 3000;
 
 const ASSETS = [
   './', 'index.html', 'manifest.json', 'css/main.css',
+  'fonts/inter-latin.woff2', 'fonts/inter-latin-ext.woff2',
+  'fonts/jetbrains-mono-latin.woff2', 'fonts/jetbrains-mono-latin-ext.woff2',
   'js/engine/conversions.js', 'js/engine/atmosphere.js',
   'js/engine/drag-models.js', 'js/engine/stability.js',
   'js/engine/coriolis.js', 'js/engine/solver.js',
@@ -35,9 +37,17 @@ const ASSETS = [
   'img/silhouettes/bird.png', 'img/silhouettes/duck.png',
   'img/silhouettes/goat.png', 'img/silhouettes/fox.png',
   'img/silhouettes/beaver.png', 'img/silhouettes/muskrat.png',
+  'img/silhouettes/goose.png', 'img/silhouettes/coot.png',
+  'img/silhouettes/cormorant.png', 'img/silhouettes/quail.png',
+  'img/silhouettes/partridge.png', 'img/silhouettes/pheasant.png',
+  'img/silhouettes/raptor.png', 'img/silhouettes/parrot.png',
+  'img/silhouettes/songbird.png', 'img/silhouettes/mink.png',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png'
 ];
+
+const BASE_HREF = (self.registration && self.registration.scope) ? self.registration.scope : self.location.href;
+const KNOWN_PATHS = new Set(ASSETS.map(a => new URL(a, BASE_HREF).pathname));
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -57,7 +67,7 @@ self.addEventListener('activate', event => {
 });
 
 function isStaticImage(url) {
-  return /\.(png|jpg|jpeg|webp|svg|ico)$/i.test(url.pathname);
+  return /\.(png|jpg|jpeg|webp|svg|ico|woff2)$/i.test(url.pathname);
 }
 
 function cacheMatch(request) {
@@ -65,8 +75,12 @@ function cacheMatch(request) {
 }
 
 function putInCache(event, request, response) {
+  if (!response || response.status !== 200 || response.type !== 'basic') return;
+  const reqUrl = new URL(request.url);
+  if (!KNOWN_PATHS.has(reqUrl.pathname)) return;
+  const cleanUrl = reqUrl.origin + reqUrl.pathname;
   const copy = response.clone();
-  event.waitUntil(caches.open(CACHE_NAME).then(c => c.put(request, copy)));
+  event.waitUntil(caches.open(CACHE_NAME).then(c => c.put(cleanUrl, copy)));
 }
 
 function cacheFirst(event) {

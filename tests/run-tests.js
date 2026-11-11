@@ -186,5 +186,74 @@ test('a 1000 m solve takes < 40 ms (original: 80–150 ms on a desktop)', () => 
   ok(ms < 40, `${ms.toFixed(1)} ms`);
 });
 
+console.log('\nSecurity hardening');
+test('Solver clamps extreme/malicious inputs without DoS hang or NaN', () => {
+  const t0 = Date.now();
+  const res = solve(sc.rifle308, {
+    maxRangeM: 1e9, stepM: 0.00001, integrationDt: 1e-9,
+    lookAngleDeg: 90, muzzleVelMps: -500, bc: -2, zeroRangeM: 1e8
+  });
+  const ms = Date.now() - t0;
+  ok(res.length <= 5001, `rows bounded <= 5001 (got ${res.length})`);
+  ok(ms < 2000, `bounded solve completed quickly (${ms} ms)`);
+  for (const r of res) {
+    ok(Number.isFinite(r.rangeM) && Number.isFinite(r.dropIn) && Number.isFinite(r.windageIn), 'finite output row');
+  }
+});
+
+test('DOPE.exportCSV neutralizes OWASP formula injection across all columns and keeps negative numbers', () => {
+  const vm = require('vm');
+  const store = new Map();
+  const ctx = vm.createContext({
+    localStorage: {
+      getItem: k => (store.has(k) ? store.get(k) : null),
+      setItem: (k, v) => store.set(k, String(v)),
+      removeItem: k => store.delete(k)
+    },
+    console
+  });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', 'engine', 'dope.js'), 'utf8') + '\nthis.DOPE = DOPE;', ctx);
+
+  // Corrupted non-array localStorage must not crash getAll()
+  store.set('ballisticpro_dope', '{"not":"an array"}');
+  ok(Array.isArray(ctx.DOPE.getAll()) && ctx.DOPE.getAll().length === 0, 'non-array JSON safely returns []');
+  ctx.DOPE.clearAll();
+
+  ctx.DOPE.add({
+    date: '=CMD|"/C calc"!A0',
+    weapon: '  +SUM(A1:A2)',
+    ammo: '\t=1+1',
+    scope: '@IMPORTXML("http://evil")',
+    distance: '-1+1',
+    temp: -12.45,
+    pressure: 1013.25,
+    humidity: 50,
+    windSpeed: '\r-2+3',
+    windDir: 90,
+    elevClicks: 14,
+    windClicks: -3,
+    elevMoa: -4.25,
+    windMoa: 1.5,
+    calcDropMoa: -4.3,
+    calcWindMoa: 1.4,
+    groupSize: 0.75,
+    poiResult: '=HYPERLINK("http://evil")',
+    notes: 'normal, "quoted" note'
+  });
+
+  const csv = ctx.DOPE.exportCSV('metric');
+  const lines = csv.split('\n');
+  ok(lines.length === 2, 'header + 1 data row');
+  const row = lines[1];
+  ok(row.startsWith('"\'=CMD|""/C calc""!A0",'), `date formula neutralized & RFC-4180 quoted: ${row}`);
+  ok(row.includes(",'  +SUM(A1:A2),"), 'leading whitespace + plus formula neutralized');
+  ok(row.includes(",'\t=1+1,"), 'leading tab formula neutralized');
+  ok(row.includes(',"\'@IMPORTXML(""http://evil"")",'), '@ formula neutralized & RFC-4180 quoted');
+  ok(row.includes(",'-1+1,"), 'negative expression neutralized');
+  ok(row.includes(',-12.45,') && row.includes(',-3,') && row.includes(',-4.25,'), 'plain negative numbers kept numeric');
+  ok(row.includes('"\'\r-2+3"'), 'CR-prefixed formula neutralized and RFC-4180 quoted');
+  ok(row.includes(',"\'=HYPERLINK(""http://evil"")",'), 'poiResult formula neutralized & RFC-4180 quoted');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

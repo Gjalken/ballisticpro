@@ -17,7 +17,8 @@ const DOPE = (() => {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return [];
       const data = JSON.parse(raw);
-      return data.sort((a, b) => b.timestamp - a.timestamp);
+      if (!Array.isArray(data)) return [];
+      return data.filter(x => x && typeof x === 'object').sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     } catch (e) {
       console.warn('DOPE: Error reading data', e);
       return [];
@@ -74,23 +75,26 @@ const DOPE = (() => {
     ].join(',');
 
     const rows = entries.map(e => [
-      e.date, _csvEscape(e.weapon), _csvEscape(e.ammo), _csvEscape(e.scope),
+      e.date, e.weapon, e.ammo, e.scope,
       e.distance, e.temp, e.pressure, e.humidity,
       e.windSpeed, e.windDir,
       e.elevClicks, e.windClicks, e.elevMoa, e.windMoa,
-      e.calcDropMoa || '', e.calcWindMoa || '',
-      e.groupSize || '', _csvEscape(e.poiResult || ''), _csvEscape(e.notes || '')
-    ].join(','));
+      e.calcDropMoa ?? '', e.calcWindMoa ?? '',
+      e.groupSize ?? '', e.poiResult ?? '', e.notes ?? ''
+    ].map(_csvEscape).join(','));
 
     return [header, ...rows].join('\n');
   }
 
-  function _csvEscape(str) {
-    if (!str) return '';
-    str = String(str);
-    // Neutralise spreadsheet formula injection (=, +, -, @ at the start of a cell)
-    if (/^[=+\-@]/.test(str)) str = "'" + str;
-    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+  function _csvEscape(val) {
+    if (val == null || val === '') return '';
+    let str = String(val);
+    // OWASP CSV Formula Injection mitigation: neutralise leading =, +, -, @, tab, CR
+    // (including after leading spaces), while keeping plain negative numbers (e.g. -12.45) numeric.
+    if (/^[\t\r]/.test(str) || (/^\s*[=+\-@]/.test(str) && !/^\s*-\d+(\.\d+)?$/.test(str))) {
+      str = "'" + str;
+    }
+    if (/[,"\n\r]/.test(str)) {
       return '"' + str.replace(/"/g, '""') + '"';
     }
     return str;
